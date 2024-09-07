@@ -15,6 +15,7 @@ const QuestionDetail = () => {
   const [userInput, setUserInput] = useState('');
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState(''); // Added state
 
   useEffect(() => {
     const fetchQuestionData = async () => {
@@ -35,7 +36,7 @@ const QuestionDetail = () => {
     try {
       const response = await axios.post('http://localhost:8080/api/compiler/compile', {
         sourceCode,
-        language: language === 'c_cpp' ? 'C++' : 'C', // Adjust based on language
+        language: language === 'c_cpp' ? 'C++' : 'C',
         userInput
       });
       const resultData = response.data;
@@ -51,21 +52,22 @@ const QuestionDetail = () => {
 
   const handleVerifySubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+
+    const codeRequest = {
+      sourceCode,
+      language,
+      questionSetId,
+      questionNo,
+    
+       
+    };
+    console.log(questionSetId)
+    console.log(questionNo)
     try {
-      const response = await axios.post('http://localhost:8080/api/compiler/compileTests', {
-        sourceCode,
-        language: language === 'c_cpp' ? 'C' : 'C++',
-        questionSetId,
-        questionNo: parseInt(questionNo) // Convert to number if necessary
-      });
-      const resultData = response.data;
-      setResult(resultData);
+      const res = await axios.post('http://localhost:8080/api/compiler/compileTests', codeRequest);
+      setResponse(res.data);
     } catch (error) {
-      console.error("Error occurred:", error);
-      setResult(error.response?.data || 'An error occurred');
-    } finally {
-      setLoading(false);
+      setResponse(`Error: ${error.response ? error.response.data : error.message}`);
     }
   };
 
@@ -79,7 +81,6 @@ const QuestionDetail = () => {
 
         let allTestsPassed = true;
 
-        // Check if the result matches the expected output for any of the test cases
         const resultString = String(result).trim();
 
         for (let i = 0; i < testCaseOutputs.length; i++) {
@@ -95,7 +96,6 @@ const QuestionDetail = () => {
           }
         }
 
-        // Check if user input matches any of the test case inputs
         if (testCaseInputs.includes(userInput.trim())) {
           console.log('User input matches one of the test case inputs');
         } else {
@@ -125,7 +125,6 @@ const QuestionDetail = () => {
 
   return (
     <div style={{ display: 'flex', padding: '20px', maxWidth: '1200px', margin: 'auto' }}>
-      {/* Left Column for Question and Details */}
       <div style={{ flex: '1', marginRight: '20px', borderRight: '1px solid #ddd', paddingRight: '20px' }}>
         <h2>Question Details</h2>
         {error && <div className="text-red-500">{error}</div>}
@@ -149,7 +148,6 @@ const QuestionDetail = () => {
         )}
       </div>
 
-      {/* Right Column for Code Editor and Output */}
       <div style={{ flex: '2', display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <AceEditor
           mode={language}
@@ -192,43 +190,36 @@ const QuestionDetail = () => {
                 backgroundColor: '#007BFF',
                 color: '#fff',
                 border: 'none',
-                borderRadius: '4px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                transition: 'background-color 0.3s',
-                marginTop: '10px'
+                borderRadius: '4px'
               }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0056b3'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#007BFF'}
             >
-              {loading ? 'Compiling...' : 'Compile'}
+              Compile
             </button>
             <button
+              type="button"
               onClick={handleVerifySubmit}
               style={{
                 padding: '10px 20px',
                 fontSize: '16px',
                 cursor: 'pointer',
-                backgroundColor: '#28a745',
+                backgroundColor: '#28A745',
                 color: '#fff',
                 border: 'none',
-                borderRadius: '4px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                transition: 'background-color 0.3s',
-                marginTop: '10px'
+                borderRadius: '4px'
               }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#218838'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#28a745'}
             >
               Verify
             </button>
           </div>
-          {result && (
-            <div style={{ marginTop: '20px', padding: '10px', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: '#f8f9fa' }}>
-              <h3>Result:</h3>
-              <pre>{result}</pre>
-            </div>
-          )}
+          {loading && <div>Loading...</div>}
+          <pre>{result}</pre>
         </form>
+        {response && (
+          <div style={{ marginTop: '20px', padding: '10px', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: '#f8f9fa' }}>
+            <h3>Response:</h3>
+            <pre>{response}</pre>
+          </div>
+        )}
       </div>
     </div>
   );
