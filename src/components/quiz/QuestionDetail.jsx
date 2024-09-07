@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-c_cpp'; 
@@ -8,6 +8,7 @@ import 'ace-builds/src-noconflict/ext-language_tools';
 
 const QuestionDetail = () => {
   const { questionSetId, questionNo } = useParams();
+  const navigate = useNavigate(); // Initialize useNavigate
   const [questionData, setQuestionData] = useState(null);
   const [error, setError] = useState(null);
   const [sourceCode, setSourceCode] = useState('');
@@ -58,14 +59,15 @@ const QuestionDetail = () => {
       language,
       questionSetId,
       questionNo,
-    
-       
     };
-    console.log(questionSetId)
-    console.log(questionNo)
+
     try {
       const res = await axios.post('http://localhost:8080/api/compiler/compileTests', codeRequest);
       setResponse(res.data);
+      // Redirect to /home if status code is 200
+      if (res.status === 200) {
+        navigate('/home');
+      }
     } catch (error) {
       setResponse(`Error: ${error.response ? error.response.data : error.message}`);
     }
