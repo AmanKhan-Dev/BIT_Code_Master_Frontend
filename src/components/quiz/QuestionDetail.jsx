@@ -53,22 +53,21 @@ const QuestionDetail = () => {
     e.preventDefault();
     setLoading(true);
     try {
-        const response = await axios.post('http://localhost:8080/api/compiler/compileTests', {
-            sourceCode,
-            language: language === 'c_cpp' ? 'C' : 'C++',
-            questionSetId,
-            questionNo: parseInt(questionNo) // Convert to number if necessary
-        });
-        const resultData = response.data;
-        setResult(resultData);
+      const response = await axios.post('http://localhost:8080/api/compiler/compileTests', {
+        sourceCode,
+        language: language === 'c_cpp' ? 'C' : 'C++',
+        questionSetId,
+        questionNo: parseInt(questionNo) // Convert to number if necessary
+      });
+      const resultData = response.data;
+      setResult(resultData);
     } catch (error) {
-        console.error("Error occurred:", error);
-        setResult(error.response?.data || 'An error occurred');
+      console.error("Error occurred:", error);
+      setResult(error.response?.data || 'An error occurred');
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
-
+  };
 
   const checkTestCases = (result) => {
     if (questionData) {
@@ -223,13 +222,13 @@ const QuestionDetail = () => {
               Verify
             </button>
           </div>
+          {result && (
+            <div style={{ marginTop: '20px', padding: '10px', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: '#f8f9fa' }}>
+              <h3>Result:</h3>
+              <pre>{result}</pre>
+            </div>
+          )}
         </form>
-        {result && (
-          <div className="bg-white shadow-md rounded p-4">
-            <h3>Result</h3>
-            <pre>{result}</pre>
-          </div>
-        )}
       </div>
     </div>
   );
