@@ -35,7 +35,7 @@ const QuestionDetail = () => {
     try {
       const response = await axios.post('http://localhost:8080/api/compiler/compile', {
         sourceCode,
-        language: language === 'c_cpp' ? 'C++' : 'C',
+        language: language === 'c_cpp' ? 'C++' : 'C', // Adjust based on language
         userInput
       });
       const resultData = response.data;
@@ -59,19 +59,13 @@ const QuestionDetail = () => {
 
         let allTestsPassed = true;
 
+        // Check if the result matches the expected output for any of the test cases
         const resultString = String(result).trim();
-
-        if (testCaseInputs.includes(userInput.trim())) {
-          console.log('User input matches one of the test case inputs');
-        } else {
-          console.log('User input does not match any of the test case inputs');
-          allTestsPassed = false;
-        }
 
         for (let i = 0; i < testCaseOutputs.length; i++) {
           const expectedOutput = testCaseOutputs[i];
-          const normalizedExpectedOutput = expectedOutput.replace(/\r\n|\r|\n/g, '\n');
-          const normalizedResultString = resultString.replace(/\r\n|\r|\n/g, '\n');
+          const normalizedExpectedOutput = expectedOutput.replace(/\r\n|\r|\n/g, '\n').trim();
+          const normalizedResultString = resultString.replace(/\r\n|\r|\n/g, '\n').trim();
 
           if (normalizedExpectedOutput === normalizedResultString) {
             console.log(`Output matched for test case ${i + 1}`);
@@ -79,6 +73,14 @@ const QuestionDetail = () => {
             console.log(`Output did not match for test case ${i + 1}`);
             allTestsPassed = false;
           }
+        }
+
+        // Check if user input matches any of the test case inputs
+        if (testCaseInputs.includes(userInput.trim())) {
+          console.log('User input matches one of the test case inputs');
+        } else {
+          console.log('User input does not match any of the test case inputs');
+          allTestsPassed = false;
         }
 
         if (allTestsPassed) {
@@ -93,6 +95,7 @@ const QuestionDetail = () => {
       alert('Question data not available');
     }
   };
+
 
   const handleEditorLoad = (editor) => {
     editor.setOptions({
