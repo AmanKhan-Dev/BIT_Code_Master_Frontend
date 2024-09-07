@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import AceEditor from 'react-ace';
-import 'ace-builds/src-noconflict/mode-c_cpp'; // For C and C++
-import 'ace-builds/src-noconflict/theme-github'; // Choose a theme you like
-import 'ace-builds/src-noconflict/ext-language_tools'; // For autocomplete
+import 'ace-builds/src-noconflict/mode-c_cpp'; 
+import 'ace-builds/src-noconflict/theme-github'; 
+import 'ace-builds/src-noconflict/ext-language_tools'; 
 
 const QuestionDetail = () => {
   const { questionSetId, questionNo } = useParams();
@@ -29,7 +29,7 @@ const QuestionDetail = () => {
     fetchQuestionData();
   }, [questionSetId, questionNo]);
 
-  const handleSubmit = async (e) => {
+  const handleCompileSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
@@ -48,6 +48,27 @@ const QuestionDetail = () => {
       setLoading(false);
     }
   };
+
+  const handleVerifySubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+        const response = await axios.post('http://localhost:8080/api/compiler/compileTests', {
+            sourceCode,
+            language: language === 'c_cpp' ? 'C' : 'C++',
+            questionSetId,
+            questionNo: parseInt(questionNo) // Convert to number if necessary
+        });
+        const resultData = response.data;
+        setResult(resultData);
+    } catch (error) {
+        console.error("Error occurred:", error);
+        setResult(error.response?.data || 'An error occurred');
+    } finally {
+        setLoading(false);
+    }
+};
+
 
   const checkTestCases = (result) => {
     if (questionData) {
@@ -96,7 +117,6 @@ const QuestionDetail = () => {
     }
   };
 
-
   const handleEditorLoad = (editor) => {
     editor.setOptions({
       enableBasicAutocompletion: true,
@@ -144,7 +164,7 @@ const QuestionDetail = () => {
           style={{ borderRadius: '4px', border: '1px solid #ddd' }}
           onLoad={handleEditorLoad}
         />
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <form onSubmit={handleCompileSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <label htmlFor="language" style={{ marginRight: '10px', fontWeight: 'bold' }}>Language:</label>
             <select
@@ -163,30 +183,53 @@ const QuestionDetail = () => {
             rows="4"
             style={{ width: '100%', padding: '10px', fontSize: '16px', borderColor: '#ddd', borderRadius: '4px' }}
           />
-          <button
-            type="submit"
-            style={{
-              padding: '10px 20px',
-              fontSize: '16px',
-              cursor: 'pointer',
-              backgroundColor: '#007BFF',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '4px',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-              transition: 'background-color 0.3s',
-              marginTop: '10px'
-            }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0056b3'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#007BFF'}
-          >
-            {loading ? 'Compiling...' : 'Compile'}
-          </button>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button
+              type="submit"
+              style={{
+                padding: '10px 20px',
+                fontSize: '16px',
+                cursor: 'pointer',
+                backgroundColor: '#007BFF',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '4px',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                transition: 'background-color 0.3s',
+                marginTop: '10px'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0056b3'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#007BFF'}
+            >
+              {loading ? 'Compiling...' : 'Compile'}
+            </button>
+            <button
+              onClick={handleVerifySubmit}
+              style={{
+                padding: '10px 20px',
+                fontSize: '16px',
+                cursor: 'pointer',
+                backgroundColor: '#28a745',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '4px',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                transition: 'background-color 0.3s',
+                marginTop: '10px'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#218838'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#28a745'}
+            >
+              Verify
+            </button>
+          </div>
         </form>
-        <div style={{ marginTop: '20px', whiteSpace: 'pre-wrap', border: '1px solid #ddd', padding: '10px', backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
-          <h2 style={{ margin: '0 0 10px', fontSize: '18px', fontWeight: 'bold' }}>Output:</h2>
-          <pre>{result}</pre>
-        </div>
+        {result && (
+          <div className="bg-white shadow-md rounded p-4">
+            <h3>Result</h3>
+            <pre>{result}</pre>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -16,6 +16,9 @@ const Admin = () => {
 				</Link>
 				<Link to={"/all-quizzes"} className="nav-link">
 					Manage existing Quizes
+				</Link>\
+				<Link to={"/cc"} className="nav-link">
+					code compiler
 				</Link>
 			</nav>
 		</section>

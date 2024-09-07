@@ -19,6 +19,8 @@ import Pallate from "./components/quiz/Question-Pallate"
 import AddCodingQuestion from "./components/question/AddCodingQuestion"
 import AdminLogin from "./admin/Admin_Login"
 import QuestionDetail from "./components/quiz/QuestionDetail"
+import CodeCompiler from "./components/question/CodeCompiler"
+import CompileTests from "./components/question/CodeCompiler"
 
 
 function App() {
@@ -43,6 +45,7 @@ function App() {
 					<Route path="/addset" element={<QuestionSetForm/>} />
 					<Route path="/addcq" element={<AddCodingQuestion/>} />
 					<Route path="/adminLogin" element={<AdminLogin/>} />
+					<Route path="/cc" element={<CompileTests/>} />
 					<Route path="/questions/:questionSetId/:questionNo" element={<QuestionDetail />} />
 				</Routes>
 			</Router>
