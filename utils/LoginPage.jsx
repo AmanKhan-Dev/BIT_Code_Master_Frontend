@@ -58,7 +58,7 @@ const Login = () => {
             required
           />
           <span className="forgot-password">
-            <a href="#">Forgot Password ?</a>
+            <a href="#"></a>
           </span>
           <input value="Sign In" type="submit" className="login-button" />
         </form>

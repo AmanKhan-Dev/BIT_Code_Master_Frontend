@@ -21,48 +21,16 @@ const Navbar = () => {
 				<div className="collapse navbar-collapse" id="navbarNav">
 					<ul className="navbar-nav ml-auto">
 						<li className="nav-item">
-							<NavLink className="nav-link" to={"/admin"}>
-								Admin
-							</NavLink>
-						</li>
-
-						<li className="nav-item">
-							<NavLink className="nav-link" to={"/quiz-stepper"}>
-								Take Quiz
-							</NavLink>
-						</li>
-
-						<li className="nav-item">
-							<NavLink className="nav-link" to={"/Register"}>
-								Register
-							</NavLink>
-						</li>
-						<li className="nav-item">
 							<NavLink className="nav-link" to={"/Login-Page"}>
 								Login
 							</NavLink>
+							
 						</li>
-						<li className="nav-item">
-							<NavLink className="nav-link" to={"/compiler"}>
-								Open Compiler
+						<NavLink className="nav-link" to={"/Register"}>
+								Sign Up
 							</NavLink>
-						</li>
-						<li className="nav-item">
-							<NavLink className="nav-link" to={"/addset"}>
-								Add New Set
-							</NavLink>
-						</li>
 
-						<li className="nav-item">
-							<NavLink className="nav-link" to={"/pallate"}>
-								Question Pallete
-							</NavLink>
-						</li>
-						<li className="nav-item">
-							<NavLink className="nav-link" to={"/addcq"}>
-								AddCodingQ
-							</NavLink>
-						</li>
+						
 					</ul>
 				</div>
 			</div>
