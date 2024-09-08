@@ -9,7 +9,7 @@ const Pallate = () => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedQuestion, setSelectedQuestion] = useState('');
+  const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [openCategory, setOpenCategory] = useState(null);
   const navigate = useNavigate();
 
@@ -36,7 +36,9 @@ const Pallate = () => {
 
   const handleSolveClick = () => {
     if (selectedQuestion) {
-      navigate('/compiler');
+      // Extract question number from the selected question text
+      const questionNo = selectedQuestion.match(/\d+/)[0]; // Extracts the first number from the question text
+      navigate(`/questions/${questionSetId}/${questionNo}`);
     }
   };
 
@@ -57,7 +59,7 @@ const Pallate = () => {
       <div className="text-area-container">
         <textarea
           className="question-textarea"
-          value={selectedQuestion}
+          value={selectedQuestion || ''}
           readOnly
         />
         <div className="solve-button-container">
