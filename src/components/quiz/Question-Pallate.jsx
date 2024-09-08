@@ -1,9 +1,11 @@
+// Pallate.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
-const Pallate = ({ questionSetId }) => {
+const Pallate = () => {
+  const { questionSetId } = useParams(); // Retrieve questionSetId from URL
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,9 +17,7 @@ const Pallate = ({ questionSetId }) => {
     const fetchQuestions = async () => {
       try {
         const response = await axios.get('http://localhost:8080/codingQuestions/allCodingQuestions', {
-          params: {
-            questionSetId: questionSetId || 'BTCOCOC505',
-          },
+          params: { questionSetId: questionSetId || 'BTCOCOC505' },
         });
         setQuestions(response.data);
       } catch (err) {
@@ -61,9 +61,9 @@ const Pallate = ({ questionSetId }) => {
           readOnly
         />
         <div className="solve-button-container">
-          <button 
-            className="solve-button" 
-            onClick={handleSolveClick} 
+          <button
+            className="solve-button"
+            onClick={handleSolveClick}
             disabled={!selectedQuestion}
           >
             Solve
@@ -105,7 +105,7 @@ const StyledSection = styled.section`
   .text-area-container {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Align items to the left */
+    align-items: flex-start;
     margin-bottom: 20px;
   }
 
@@ -123,7 +123,7 @@ const StyledSection = styled.section`
 
   .solve-button-container {
     display: flex;
-    justify-content: flex-start; /* Align button to the left */
+    justify-content: flex-start;
     width: 100%;
   }
 

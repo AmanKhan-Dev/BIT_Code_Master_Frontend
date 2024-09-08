@@ -21,6 +21,7 @@ import AdminLogin from "./admin/Admin_Login"
 import QuestionDetail from "./components/quiz/QuestionDetail"
 import CodeCompiler from "./components/question/CodeCompiler"
 import CompileTests from "./components/question/CodeCompiler"
+import JoinChallenge from "./components/quiz/JoinTest"
 
 
 function App() {
@@ -34,7 +35,7 @@ function App() {
 					<Route path="/quiz-stepper" element={<QuizStepper />} />
 					<Route path="/take-quiz" element={<Quiz />} />
 					<Route path="/admin" element={<Admin />} />
-					<Route path="/pallate" element={<Pallate />} />
+					{/* <Route path="/pallate" element={<Pallate />} /> */}
 					<Route path ="compiler" element={<CodeEditor/>} />
 					<Route path="/Register" element= {<Register />} />
 					<Route path="/compiler" element= {<Compiler />} />
@@ -47,6 +48,8 @@ function App() {
 					<Route path="/adminLogin" element={<AdminLogin/>} />
 					<Route path="/cc" element={<CompileTests/>} />
 					<Route path="/questions/:questionSetId/:questionNo" element={<QuestionDetail />} />
+					<Route path="/join" element={<JoinChallenge/>} />
+					<Route path="/pallate/:questionSetId" element={<Pallate />} />
 				</Routes>
 			</Router>
 		</main>

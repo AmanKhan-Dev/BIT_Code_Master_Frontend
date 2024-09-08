@@ -20,6 +20,9 @@ const Admin = () => {
 				<Link to={"/cc"} className="nav-link">
 					code compiler
 				</Link>
+				<Link to={"/join"} className="nav-link">
+					join challange
+				</Link>
 			</nav>
 		</section>
 	)

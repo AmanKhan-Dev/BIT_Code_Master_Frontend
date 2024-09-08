@@ -5,6 +5,7 @@ import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-c_cpp'; 
 import 'ace-builds/src-noconflict/theme-github'; 
 import 'ace-builds/src-noconflict/ext-language_tools'; 
+import './QuestionDetail.css'; // Create a separate CSS file for styles
 
 const QuestionDetail = () => {
   const { questionSetId, questionNo } = useParams();
@@ -42,13 +43,8 @@ const QuestionDetail = () => {
       });
       const resultData = response.data;
       setResult(resultData);
-      // Check if test cases passed
       const testCasesPassed = checkTestCases(resultData);
-      if (testCasesPassed) {
-        alert('All test cases passed');
-      } else {
-        alert('Some test cases did not pass');
-      }
+      alert(testCasesPassed ? 'All test cases passed' : 'Some test cases did not pass');
     } catch (error) {
       setResponse(`Error: ${error.response ? error.response.data : error.message}`);
     } finally {
@@ -60,7 +56,6 @@ const QuestionDetail = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Compile the code
       const compileResponse = await axios.post('http://localhost:8080/api/compiler/compile', {
         sourceCode,
         language: language === 'c_cpp' ? 'C++' : 'C',
@@ -70,7 +65,6 @@ const QuestionDetail = () => {
       const resultData = compileResponse.data;
       setResult(resultData);
 
-      // Verify test cases
       const verifyResponse = await axios.post('http://localhost:8080/api/compiler/compileTests', {
         sourceCode,
         language,
@@ -79,10 +73,7 @@ const QuestionDetail = () => {
       });
 
       setResponse(verifyResponse.data);
-      
-      // Check if test cases passed
       const testCasesPassed = checkTestCases(resultData);
-
       if (verifyResponse.status === 200 && testCasesPassed) {
         navigate('/home');
       }
@@ -97,7 +88,6 @@ const QuestionDetail = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Compile the code
       const response = await axios.post('http://localhost:8080/api/compiler/compile', {
         sourceCode,
         language: language === 'c_cpp' ? 'C++' : 'C',
@@ -106,14 +96,8 @@ const QuestionDetail = () => {
 
       const resultData = response.data;
       setResult(resultData);
-
-      // Check if test cases passed
       const testCasesPassed = checkTestCases(resultData);
-      if (testCasesPassed) {
-        alert('All test cases passed');
-      } else {
-        alert('Some test cases did not pass');
-      }
+      alert(testCasesPassed ? 'All test cases passed' : 'Some test cases did not pass');
     } catch (error) {
       setResponse(`Error: ${error.response ? error.response.data : error.message}`);
     } finally {
@@ -124,32 +108,23 @@ const QuestionDetail = () => {
   const checkTestCases = (result) => {
     if (questionData) {
       const { test_case_output, test_case_input } = questionData;
-      
       if (test_case_output && test_case_input) {
         const testCaseInputs = test_case_input.split('|').map(input => input.trim());
         const testCaseOutputs = test_case_output.split('|').map(output => output.trim());
-
         let allTestsPassed = true;
 
         const resultString = String(result).trim();
-
         for (let i = 0; i < testCaseOutputs.length; i++) {
           const expectedOutput = testCaseOutputs[i];
           const normalizedExpectedOutput = expectedOutput.replace(/\r\n|\r|\n/g, '\n').trim();
           const normalizedResultString = resultString.replace(/\r\n|\r|\n/g, '\n').trim();
 
-          if (normalizedExpectedOutput === normalizedResultString) {
-            console.log(`Output matched for test case ${i + 1}`);
-          } else {
-            console.log(`Output did not match for test case ${i + 1}`);
+          if (normalizedExpectedOutput !== normalizedResultString) {
             allTestsPassed = false;
           }
         }
 
-        if (testCaseInputs.includes(userInput.trim())) {
-          console.log('User input matches one of the test case inputs');
-        } else {
-          console.log('User input does not match any of the test case inputs');
+        if (!testCaseInputs.includes(userInput.trim())) {
           allTestsPassed = false;
         }
 
@@ -172,12 +147,12 @@ const QuestionDetail = () => {
   };
 
   return (
-    <div style={{ display: 'flex', padding: '20px', maxWidth: '1200px', margin: 'auto' }}>
-      <div style={{ flex: '1', marginRight: '20px', borderRight: '1px solid #ddd', paddingRight: '20px' }}>
+    <div className="question-detail-container">
+      <div className="question-info">
         <h2>Question Details</h2>
-        {error && <div className="text-red-500">{error}</div>}
+        {error && <div className="error-message">{error}</div>}
         {questionData ? (
-          <div className="bg-white shadow-md rounded p-4">
+          <div className="question-card">
             <p><strong>Question Set ID:</strong> {questionData.questionSetId}</p>
             <p><strong>Question No:</strong> {questionData.questionNo}</p>
             <p><strong>Question:</strong> {questionData.question}</p>
@@ -192,11 +167,11 @@ const QuestionDetail = () => {
             )}
           </div>
         ) : (
-          <div>Loading...</div>
+          <div className="loading">Loading...</div>
         )}
       </div>
 
-      <div style={{ flex: '2', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div className="code-editor-section">
         <AceEditor
           mode={language}
           theme="github"
@@ -209,14 +184,14 @@ const QuestionDetail = () => {
           style={{ borderRadius: '4px', border: '1px solid #ddd' }}
           onLoad={handleEditorLoad}
         />
-        <form onSubmit={handleVerifySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <label htmlFor="language" style={{ marginRight: '10px', fontWeight: 'bold' }}>Language:</label>
+        <form onSubmit={handleVerifySubmit} className="code-form">
+          <div className="form-group">
+            <label htmlFor="language">Language:</label>
             <select
               id="language"
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              style={{ padding: '10px', fontSize: '16px', borderColor: '#ddd', borderRadius: '4px', flex: '1' }}
+              className="language-select"
             >
               <option value="c_cpp">C</option>
             </select>
@@ -226,43 +201,27 @@ const QuestionDetail = () => {
             onChange={(e) => setUserInput(e.target.value)}
             placeholder="Enter input for your program (if any)"
             rows="4"
-            style={{ width: '100%', padding: '10px', fontSize: '16px', borderColor: '#ddd', borderRadius: '4px' }}
+            className="user-input"
           />
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div className="button-group">
             <button
               type="submit"
-              style={{
-                padding: '10px 20px',
-                fontSize: '16px',
-                cursor: 'pointer',
-                backgroundColor: '#007BFF',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '4px'
-              }}
+              className="verify-button"
             >
               Verify
             </button>
             <button
               onClick={handleRunCode}
-              style={{
-                padding: '10px 20px',
-                fontSize: '16px',
-                cursor: 'pointer',
-                backgroundColor: '#28a745',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '4px'
-              }}
+              className="run-code-button"
             >
               Run Code
             </button>
           </div>
-          {loading && <div>Loading...</div>}
-          <pre>{result}</pre>
+          {loading && <div className="loading">Loading...</div>}
+          <pre className="result-output">{result}</pre>
         </form>
         {response && (
-          <div style={{ marginTop: '20px', padding: '10px', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: '#f8f9fa' }}>
+          <div className="response-container">
             <h3>Response:</h3>
             <pre>{response}</pre>
           </div>
