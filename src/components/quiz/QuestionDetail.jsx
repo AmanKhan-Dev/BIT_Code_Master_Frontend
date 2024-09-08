@@ -44,7 +44,7 @@ const QuestionDetail = () => {
       const resultData = response.data;
       setResult(resultData);
       const testCasesPassed = checkTestCases(resultData);
-      alert(testCasesPassed ? 'All test cases passed' : 'Some test cases did not pass');
+      alert(testCasesPassed ? 'Sample Input And Output Matched' : 'Some test cases did not pass');
     } catch (error) {
       setResponse(`Error: ${error.response ? error.response.data : error.message}`);
     } finally {
@@ -98,7 +98,7 @@ const QuestionDetail = () => {
       const resultData = response.data;
       setResult(resultData);
       const testCasesPassed = checkTestCases(resultData);
-      alert(testCasesPassed ? 'All test cases passed' : 'Some test cases did not pass');
+      alert(testCasesPassed ? 'Sample Input And Output Matched' : 'Some test cases did not pass');
     } catch (error) {
       setResponse(`Error: ${error.response ? error.response.data : error.message}`);
     } finally {
