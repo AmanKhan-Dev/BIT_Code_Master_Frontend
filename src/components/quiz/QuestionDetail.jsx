@@ -8,7 +8,7 @@ import 'ace-builds/src-noconflict/ext-language_tools';
 
 const QuestionDetail = () => {
   const { questionSetId, questionNo } = useParams();
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
   const [questionData, setQuestionData] = useState(null);
   const [error, setError] = useState(null);
   const [sourceCode, setSourceCode] = useState('');
@@ -16,7 +16,7 @@ const QuestionDetail = () => {
   const [userInput, setUserInput] = useState('');
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState(''); // Added state
+  const [response, setResponse] = useState('');
 
   useEffect(() => {
     const fetchQuestionData = async () => {
@@ -42,10 +42,15 @@ const QuestionDetail = () => {
       });
       const resultData = response.data;
       setResult(resultData);
-      checkTestCases(resultData);
+      // Check if test cases passed
+      const testCasesPassed = checkTestCases(resultData);
+      if (testCasesPassed) {
+        alert('All test cases passed');
+      } else {
+        alert('Some test cases did not pass');
+      }
     } catch (error) {
-      console.error("Error occurred:", error);
-      setResult(error.response?.data || 'An error occurred');
+      setResponse(`Error: ${error.response ? error.response.data : error.message}`);
     } finally {
       setLoading(false);
     }
@@ -53,30 +58,73 @@ const QuestionDetail = () => {
 
   const handleVerifySubmit = async (e) => {
     e.preventDefault();
-
-    const codeRequest = {
-      sourceCode,
-      language,
-      questionSetId,
-      questionNo,
-    };
-
+    setLoading(true);
     try {
-      const res = await axios.post('http://localhost:8080/api/compiler/compileTests', codeRequest);
-      setResponse(res.data);
-      // Redirect to /home if status code is 200
-      if (res.status === 200) {
+      // Compile the code
+      const compileResponse = await axios.post('http://localhost:8080/api/compiler/compile', {
+        sourceCode,
+        language: language === 'c_cpp' ? 'C++' : 'C',
+        userInput
+      });
+
+      const resultData = compileResponse.data;
+      setResult(resultData);
+
+      // Verify test cases
+      const verifyResponse = await axios.post('http://localhost:8080/api/compiler/compileTests', {
+        sourceCode,
+        language,
+        questionSetId,
+        questionNo,
+      });
+
+      setResponse(verifyResponse.data);
+      
+      // Check if test cases passed
+      const testCasesPassed = checkTestCases(resultData);
+
+      if (verifyResponse.status === 200 && testCasesPassed) {
         navigate('/home');
       }
     } catch (error) {
       setResponse(`Error: ${error.response ? error.response.data : error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRunCode = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      // Compile the code
+      const response = await axios.post('http://localhost:8080/api/compiler/compile', {
+        sourceCode,
+        language: language === 'c_cpp' ? 'C++' : 'C',
+        userInput
+      });
+
+      const resultData = response.data;
+      setResult(resultData);
+
+      // Check if test cases passed
+      const testCasesPassed = checkTestCases(resultData);
+      if (testCasesPassed) {
+        alert('All test cases passed');
+      } else {
+        alert('Some test cases did not pass');
+      }
+    } catch (error) {
+      setResponse(`Error: ${error.response ? error.response.data : error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
   const checkTestCases = (result) => {
     if (questionData) {
       const { test_case_output, test_case_input } = questionData;
-
+      
       if (test_case_output && test_case_input) {
         const testCaseInputs = test_case_input.split('|').map(input => input.trim());
         const testCaseOutputs = test_case_output.split('|').map(output => output.trim());
@@ -105,16 +153,14 @@ const QuestionDetail = () => {
           allTestsPassed = false;
         }
 
-        if (allTestsPassed) {
-          alert('All test cases passed');
-        } else {
-          alert('Some test cases did not pass');
-        }
+        return allTestsPassed;
       } else {
         alert('Test case input or output not available');
+        return false;
       }
     } else {
       alert('Question data not available');
+      return false;
     }
   };
 
@@ -163,7 +209,7 @@ const QuestionDetail = () => {
           style={{ borderRadius: '4px', border: '1px solid #ddd' }}
           onLoad={handleEditorLoad}
         />
-        <form onSubmit={handleCompileSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <form onSubmit={handleVerifySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <label htmlFor="language" style={{ marginRight: '10px', fontWeight: 'bold' }}>Language:</label>
             <select
@@ -195,22 +241,21 @@ const QuestionDetail = () => {
                 borderRadius: '4px'
               }}
             >
-              Compile
+              Verify
             </button>
             <button
-              type="button"
-              onClick={handleVerifySubmit}
+              onClick={handleRunCode}
               style={{
                 padding: '10px 20px',
                 fontSize: '16px',
                 cursor: 'pointer',
-                backgroundColor: '#28A745',
+                backgroundColor: '#28a745',
                 color: '#fff',
                 border: 'none',
                 borderRadius: '4px'
               }}
             >
-              Verify
+              Run Code
             </button>
           </div>
           {loading && <div>Loading...</div>}
