@@ -14,6 +14,7 @@ import {
 import { saveStudent } from "../../../utils/StudentService";
 import FadeTransition from './FadeTransition'; // Import the FadeTransition component
 import './fadeTransition.css'; // Import the CSS file
+import { useNavigate } from "react-router-dom"; 
 
 function Register() {
   const [student, setStudent] = useState({
@@ -28,6 +29,8 @@ function Register() {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showContent, setShowContent] = useState(false);
+  
+  const navigate = useNavigate(); // Initialize useNavigate hook here
 
   useEffect(() => {
     setShowContent(true);
@@ -79,12 +82,13 @@ function Register() {
           subscribe: false,
         });
         setErrors({});
+        navigate("/Login-Page"); // Use navigate to redirect
       } else {
         alert('Failed to register student. Please try again.');
       }
     } catch (error) {
       console.error('Error during submission:', error);
-      alert('An error occurred while saving the student. Please try again.');
+      alert('Student Exist Already');
     } finally {
       setIsSubmitting(false);
     }

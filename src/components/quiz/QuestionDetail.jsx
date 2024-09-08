@@ -75,7 +75,8 @@ const QuestionDetail = () => {
       setResponse(verifyResponse.data);
       const testCasesPassed = checkTestCases(resultData);
       if (verifyResponse.status === 200 && testCasesPassed) {
-        navigate('/home');
+        alert("All Test Case Varified");
+        navigate(-1); // Redirect to the previous page
       }
     } catch (error) {
       setResponse(`Error: ${error.response ? error.response.data : error.message}`);

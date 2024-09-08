@@ -20,7 +20,7 @@ const Login = () => {
   
       if (response.status === 200) {
         alert("Login Successful");
-        navigate("/"); 
+        navigate("/join"); 
       }
     } catch (err) {
       if (err.response && err.response.status === 401) {
