@@ -44,7 +44,7 @@ const QuestionDetail = () => {
       const resultData = response.data;
       setResult(resultData);
       const testCasesPassed = checkTestCases(resultData);
-      alert(testCasesPassed ? 'Sample Input And Output Matched' : 'Some test cases did not pass');
+      alert(testCasesPassed ? 'All test cases passed' : 'Some test cases did not pass');
     } catch (error) {
       setResponse(`Error: ${error.response ? error.response.data : error.message}`);
     } finally {
@@ -98,7 +98,7 @@ const QuestionDetail = () => {
       const resultData = response.data;
       setResult(resultData);
       const testCasesPassed = checkTestCases(resultData);
-      alert(testCasesPassed ? 'Sample Input And Output Matched' : 'Some test cases did not pass');
+      alert(testCasesPassed ? 'All test cases passed' : 'Some test cases did not pass');
     } catch (error) {
       setResponse(`Error: ${error.response ? error.response.data : error.message}`);
     } finally {
@@ -143,26 +143,10 @@ const QuestionDetail = () => {
   const handleEditorLoad = (editor) => {
     editor.setOptions({
       enableBasicAutocompletion: true,
-      enableLiveAutocompletion: true,
-    });
-  
-    // Disable copy, paste, and cut
-    editor.container.addEventListener("copy", (e) => e.preventDefault());
-    editor.container.addEventListener("paste", (e) => e.preventDefault());
-    editor.container.addEventListener("cut", (e) => e.preventDefault());
-  
-    // Disable right-click context menu
-    editor.container.addEventListener("contextmenu", (e) => e.preventDefault());
-  
-    // Disable Ctrl+C and Ctrl+V
-    editor.commands.addCommand({
-      name: "disableCopyPaste",
-      bindKey: { win: "Ctrl-C|Ctrl-V", mac: "Command-C|Command-V" },
-      exec: () => {}, // No operation
-      readOnly: true, // Prevents modifying content in read-only mode
+      enableLiveAutocompletion: true
     });
   };
-  
+
   return (
     <div className="question-detail-container">
       <div className="question-info">

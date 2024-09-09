@@ -1,4 +1,3 @@
-// Pallate.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
@@ -6,7 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 const Pallate = () => {
   const { questionSetId } = useParams(); // Retrieve questionSetId from URL
-  const [questions, setQuestions] = useState([]);
+  const [questionsByCategory, setQuestionsByCategory] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
@@ -19,7 +18,16 @@ const Pallate = () => {
         const response = await axios.get('http://localhost:8080/codingQuestions/allCodingQuestions', {
           params: { questionSetId: questionSetId || 'BTCOCOC505' },
         });
-        setQuestions(response.data);
+        
+        // Group questions by category
+        const groupedQuestions = response.data.reduce((acc, question) => {
+          const category = question.questionCategory || 'Uncategorized';
+          if (!acc[category]) acc[category] = [];
+          acc[category].push(question);
+          return acc;
+        }, {});
+
+        setQuestionsByCategory(groupedQuestions);
       } catch (err) {
         setError(err);
       } finally {
@@ -37,7 +45,7 @@ const Pallate = () => {
   const handleSolveClick = () => {
     if (selectedQuestion) {
       // Extract question number from the selected question text
-      const questionNo = selectedQuestion.match(/\d+/)[0]; // Extracts the first number from the question text
+      const questionNo = selectedQuestion.questionNo; // Use questionNo directly
       navigate(`/questions/${questionSetId}/${questionNo}`);
     }
   };
@@ -49,17 +57,12 @@ const Pallate = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error fetching questions: {error.message}</p>;
 
-  const categories = [];
-  for (let i = 0; i < questions.length; i += 10) {
-    categories.push(questions.slice(i, i + 10));
-  }
-
   return (
     <StyledSection>
       <div className="text-area-container">
         <textarea
           className="question-textarea"
-          value={selectedQuestion || ''}
+          value={selectedQuestion ? selectedQuestion.question : ''}
           readOnly
         />
         <div className="solve-button-container">
@@ -76,20 +79,20 @@ const Pallate = () => {
         <h4>50 QUESTIONS OF C</h4>
       </div>
       <div className="accordion-container">
-        {categories.map((category, index) => (
+        {Object.entries(questionsByCategory).map(([category, questions], index) => (
           <Accordion key={index}>
             <AccordionHeader onClick={() => toggleCategory(index)}>
-              <h5>Category {index + 1}</h5>
+              <h5>{category}</h5>
             </AccordionHeader>
             <AccordionBody isOpen={openCategory === index}>
               <div className="grid-container">
-                {category.map((question, questionIndex) => (
+                {questions.map((question, questionIndex) => (
                   <button
                     key={questionIndex}
                     className="question-button"
                     onClick={() => handleQuestionClick(question)}
                   >
-                    {questionIndex + 1}
+                    {question.questionNo}
                   </button>
                 ))}
               </div>
