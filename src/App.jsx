@@ -22,6 +22,7 @@ import QuestionDetail from "./components/quiz/QuestionDetail";
 import CodeCompiler from "./components/question/CodeCompiler";
 import CompileTests from "./components/question/CodeCompiler";
 import JoinChallenge from "./components/quiz/JoinTest";
+import Dashboard from "../utils/UserDashboard";
 
 const App = () => {
   const location = useLocation();
@@ -52,6 +53,8 @@ const App = () => {
         <Route path="/questions/:questionSetId/:questionNo" element={<QuestionDetail />} />
         <Route path="/join" element={<JoinChallenge />} />
         <Route path="/pallate/:questionSetId" element={<Pallate />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+    
       </Routes>
     </main>
   );

@@ -1,26 +1,26 @@
 import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       const response = await axios.post("http://localhost:8080/student/logins", {
         email,
         password,
       });
-  
+
       if (response.status === 200) {
         alert("Login Successful");
-        navigate("/join"); 
+        navigate("/dashboard", { state: { email } }); // Pass email to dashboard
       }
     } catch (err) {
       if (err.response && err.response.status === 401) {
@@ -30,6 +30,7 @@ const Login = () => {
       }
     }
   };
+
   
 
   return (
