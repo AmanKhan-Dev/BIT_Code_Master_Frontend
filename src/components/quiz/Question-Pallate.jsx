@@ -11,10 +11,13 @@ const Pallate = () => {
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [openCategory, setOpenCategory] = useState(null);
   const [solvedQuestions, setSolvedQuestions] = useState({});
+  const [showUserData, setShowUserData] = useState(false); // State to handle canvas visibility
+
   const navigate = useNavigate();
   const location = useLocation();
-  const userEmail = location.state?.email; // Retrieve email from navigation state
-  const userData = location.state?.userData; // Retrieve full userData from navigation state
+  const userEmail = location.state?.email;
+  const userData = location.state?.userData;
+
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
@@ -22,7 +25,6 @@ const Pallate = () => {
           params: { questionSetId: questionSetId || 'BTCOCOC505' },
         });
 
-        // Group questions by category
         const groupedQuestions = response.data.reduce((acc, question) => {
           const category = question.questionCategory || 'Uncategorized';
           if (!acc[category]) acc[category] = [];
@@ -31,8 +33,6 @@ const Pallate = () => {
         }, {});
 
         setQuestionsByCategory(groupedQuestions);
-        
-        // Check solved questions
         checkSolvedQuestions(response.data);
       } catch (err) {
         setError(err);
@@ -46,19 +46,18 @@ const Pallate = () => {
 
   const checkSolvedQuestions = async (questions) => {
     const solvedStatus = {};
-    
     for (const question of questions) {
       try {
         const response = await axios.get('http://localhost:8080/api/results/exists', {
           params: {
             questionSetId: questionSetId,
             questionNo: question.questionNo,
-            email: userEmail // Use the email from state
+            email: userEmail,
           }
         });
 
         if (response.data === "Yes it exists") {
-          solvedStatus[question.questionNo] = true; // Mark question as solved
+          solvedStatus[question.questionNo] = true;
         }
       } catch (error) {
         console.error("Error checking if question exists:", error);
@@ -75,11 +74,20 @@ const Pallate = () => {
   const handleSolveClick = () => {
     if (selectedQuestion) {
       const questionNo = selectedQuestion.questionNo;
-      navigate(`/questions/${questionSetId}/${questionNo}`, { state: { email: userEmail, userData } });
+      navigate(`/questions/${questionSetId}/${questionNo}`, {
+        state: { email: userEmail, userData, questionSetId, questionNo }
+      });
     }
   };
+  
+  
+
   const toggleCategory = (index) => {
     setOpenCategory(openCategory === index ? null : index);
+  };
+
+  const toggleUserDataCanvas = () => {
+    setShowUserData(!showUserData);
   };
 
   if (loading) return <p>Loading...</p>;
@@ -87,6 +95,21 @@ const Pallate = () => {
 
   return (
     <StyledSection>
+      <button onClick={toggleUserDataCanvas}>
+        {showUserData ? 'Hide User Data' : 'Show User Data'}
+      </button>
+      {showUserData && (
+        <UserDataCanvas>
+          {userData && (
+            <>
+              <p>Full Name: {userData.full_name}</p>
+              <p>Email: {userData.email}</p>
+              <p>PRN No: {userData.prn_no}</p>
+              <p>Roll No: {userData.roll_no}</p>
+            </>
+          )}
+        </UserDataCanvas>
+      )}
       <div className="text-area-container">
         <textarea
           className="question-textarea"
@@ -131,6 +154,7 @@ const Pallate = () => {
     </StyledSection>
   );
 };
+
 const StyledSection = styled.section`
   padding: 20px;
 
@@ -225,6 +249,21 @@ const StyledSection = styled.section`
   .question-button.solved {
     background-color: green;
   }
+`;
+
+const UserDataCanvas = styled.div`
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 300px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Accordion = styled.div`

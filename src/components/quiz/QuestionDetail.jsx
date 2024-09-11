@@ -24,7 +24,9 @@ const QuestionDetail = () => {
   useEffect(() => {
     const fetchQuestionData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/codingQuestions/questions/${questionSetId}/${questionNo}`);
+        // Construct the URL with parameters directly
+        const url = `http://localhost:8080/codingQuestions/questions/${questionSetId}/${questionNo}`;
+        const response = await axios.get(url);
         setQuestionData(response.data);
       } catch (err) {
         setError('Error fetching question data');
@@ -187,7 +189,6 @@ const QuestionDetail = () => {
     //   readOnly: true, // Prevents modifying content in read-only mode
     // });
   };
-
   return (
     <div className="question-detail-container">
       <div className="question-info">
@@ -264,7 +265,7 @@ const QuestionDetail = () => {
         </form>
         {response && (
           <div className="response-container">
-            <h3>Response:</h3>
+            <p><strong>Response:</strong></p>
             <pre>{response}</pre>
           </div>
         )}
