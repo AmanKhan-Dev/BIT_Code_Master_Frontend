@@ -75,13 +75,17 @@ const Pallate = () => {
     if (selectedQuestion) {
       const questionNo = selectedQuestion.questionNo;
       navigate(`/questions/${questionSetId}/${questionNo}`, {
-        state: { email: userEmail, userData, questionSetId, questionNo }
+        state: { 
+          email: userEmail, 
+          userData, 
+          questionSetId, 
+          questionNo 
+        }
       });
     }
   };
   
   
-
   const toggleCategory = (index) => {
     setOpenCategory(openCategory === index ? null : index);
   };

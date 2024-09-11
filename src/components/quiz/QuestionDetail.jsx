@@ -19,12 +19,12 @@ const QuestionDetail = () => {
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState('');
-  const [userEmail, setUserEmail] = useState(''); // Add state for user email
+  
+  const { email, userData } = location.state || {}; // Retrieve user details from location state
 
   useEffect(() => {
     const fetchQuestionData = async () => {
       try {
-        // Construct the URL with parameters directly
         const url = `http://localhost:8080/codingQuestions/questions/${questionSetId}/${questionNo}`;
         const response = await axios.get(url);
         setQuestionData(response.data);
@@ -36,21 +36,16 @@ const QuestionDetail = () => {
     fetchQuestionData();
   }, [questionSetId, questionNo]);
 
-  useEffect(() => {
-    // Replace with logic to get the user email, if needed
-    setUserEmail('amankhan7058int@gmail.com'); // Example email
-  }, []);
-
   const saveResult = async (resultData) => {
     try {
       await axios.post('http://localhost:8080/api/results/saveResult', {
         questionSetId,
         questionNo,
-        email: userEmail,
-        studentName: 'Aman Riyaz Khan', // Replace with actual student name
-        prn: '23046491245507', // Replace with actual PRN
-        studentRollNo: 'B363', // Replace with actual roll number
-        solvingStatus: 1, // Assuming 1 means solved/verified
+        email,  // Use the email passed from Pallate
+        studentName: userData.full_name, // Use the full name passed from Pallate
+        prn: userData.prn_no, // Use the PRN passed from Pallate
+        studentRollNo: userData.roll_no, // Use the roll number passed from Pallate
+        solvingStatus: 1, 
       });
     } catch (error) {
       console.error('Error saving result:', error);
@@ -102,7 +97,7 @@ const QuestionDetail = () => {
       const testCasesPassed = checkTestCases(resultData);
       if (verifyResponse.status === 200 && testCasesPassed) {
         await saveResult(resultData); // Save result after verification
-        alert("All Test Case Verified");
+        alert("All Test Case Verified");  
         navigate(-1); // Redirect to the previous page
       }
     } catch (error) {
