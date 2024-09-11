@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 
 const Pallate = () => {
-  const { questionSetId } = useParams(); // Retrieve questionSetId from URL
+  const { questionSetId } = useParams();
   const [questionsByCategory, setQuestionsByCategory] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [openCategory, setOpenCategory] = useState(null);
+  const [solvedQuestions, setSolvedQuestions] = useState({});
   const navigate = useNavigate();
-
+  const location = useLocation();
+  const userEmail = location.state?.email; // Retrieve email from navigation state
+  const userData = location.state?.userData; // Retrieve full userData from navigation state
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
         const response = await axios.get('http://localhost:8080/codingQuestions/allCodingQuestions', {
           params: { questionSetId: questionSetId || 'BTCOCOC505' },
         });
-        
+
         // Group questions by category
         const groupedQuestions = response.data.reduce((acc, question) => {
           const category = question.questionCategory || 'Uncategorized';
@@ -28,6 +31,9 @@ const Pallate = () => {
         }, {});
 
         setQuestionsByCategory(groupedQuestions);
+        
+        // Check solved questions
+        checkSolvedQuestions(response.data);
       } catch (err) {
         setError(err);
       } finally {
@@ -38,18 +44,40 @@ const Pallate = () => {
     fetchQuestions();
   }, [questionSetId]);
 
+  const checkSolvedQuestions = async (questions) => {
+    const solvedStatus = {};
+    
+    for (const question of questions) {
+      try {
+        const response = await axios.get('http://localhost:8080/api/results/exists', {
+          params: {
+            questionSetId: questionSetId,
+            questionNo: question.questionNo,
+            email: userEmail // Use the email from state
+          }
+        });
+
+        if (response.data === "Yes it exists") {
+          solvedStatus[question.questionNo] = true; // Mark question as solved
+        }
+      } catch (error) {
+        console.error("Error checking if question exists:", error);
+      }
+    }
+
+    setSolvedQuestions(solvedStatus);
+  };
+
   const handleQuestionClick = (question) => {
     setSelectedQuestion(question);
   };
 
   const handleSolveClick = () => {
     if (selectedQuestion) {
-      // Extract question number from the selected question text
-      const questionNo = selectedQuestion.questionNo; // Use questionNo directly
-      navigate(`/questions/${questionSetId}/${questionNo}`);
+      const questionNo = selectedQuestion.questionNo;
+      navigate(`/questions/${questionSetId}/${questionNo}`, { state: { email: userEmail, userData } });
     }
   };
-
   const toggleCategory = (index) => {
     setOpenCategory(openCategory === index ? null : index);
   };
@@ -89,7 +117,7 @@ const Pallate = () => {
                 {questions.map((question, questionIndex) => (
                   <button
                     key={questionIndex}
-                    className="question-button"
+                    className={`question-button ${solvedQuestions[question.questionNo] ? 'solved' : ''}`}
                     onClick={() => handleQuestionClick(question)}
                   >
                     {question.questionNo}
@@ -103,7 +131,6 @@ const Pallate = () => {
     </StyledSection>
   );
 };
-
 const StyledSection = styled.section`
   padding: 20px;
 
@@ -193,6 +220,10 @@ const StyledSection = styled.section`
 
   .question-button:hover {
     background-color: #0056b3;
+  }
+
+  .question-button.solved {
+    background-color: green;
   }
 `;
 

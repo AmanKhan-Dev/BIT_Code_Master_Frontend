@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-c_cpp'; 
 import 'ace-builds/src-noconflict/theme-github'; 
 import 'ace-builds/src-noconflict/ext-language_tools'; 
-import './QuestionDetail.css'; // Create a separate CSS file for styles
+import './QuestionDetail.css';
 
 const QuestionDetail = () => {
   const { questionSetId, questionNo } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [questionData, setQuestionData] = useState(null);
   const [error, setError] = useState(null);
   const [sourceCode, setSourceCode] = useState('');
@@ -18,6 +19,7 @@ const QuestionDetail = () => {
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState('');
+  const [userEmail, setUserEmail] = useState(''); // Add state for user email
 
   useEffect(() => {
     const fetchQuestionData = async () => {
@@ -31,6 +33,28 @@ const QuestionDetail = () => {
 
     fetchQuestionData();
   }, [questionSetId, questionNo]);
+
+  useEffect(() => {
+    // Replace with logic to get the user email, if needed
+    setUserEmail('amankhan7058int@gmail.com'); // Example email
+  }, []);
+
+  const saveResult = async (resultData) => {
+    try {
+      await axios.post('http://localhost:8080/api/results/saveResult', {
+        questionSetId,
+        questionNo,
+        email: userEmail,
+        studentName: 'Aman Riyaz Khan', // Replace with actual student name
+        prn: '23046491245507', // Replace with actual PRN
+        studentRollNo: 'B363', // Replace with actual roll number
+        solvingStatus: 1, // Assuming 1 means solved/verified
+      });
+    } catch (error) {
+      console.error('Error saving result:', error);
+      setResponse(`Error saving result: ${error.response ? error.response.data : error.message}`);
+    }
+  };
 
   const handleCompileSubmit = async (e) => {
     e.preventDefault();
@@ -75,7 +99,8 @@ const QuestionDetail = () => {
       setResponse(verifyResponse.data);
       const testCasesPassed = checkTestCases(resultData);
       if (verifyResponse.status === 200 && testCasesPassed) {
-        alert("All Test Case Varified");
+        await saveResult(resultData); // Save result after verification
+        alert("All Test Case Verified");
         navigate(-1); // Redirect to the previous page
       }
     } catch (error) {
@@ -147,20 +172,20 @@ const QuestionDetail = () => {
     });
   
     // Disable copy, paste, and cut
-    editor.container.addEventListener("copy", (e) => e.preventDefault());
-    editor.container.addEventListener("paste", (e) => e.preventDefault());
-    editor.container.addEventListener("cut", (e) => e.preventDefault());
+    // editor.container.addEventListener("copy", (e) => e.preventDefault());
+    // editor.container.addEventListener("paste", (e) => e.preventDefault());
+    // editor.container.addEventListener("cut", (e) => e.preventDefault());
   
-    // Disable right-click context menu
-    editor.container.addEventListener("contextmenu", (e) => e.preventDefault());
+    // // Disable right-click context menu
+    // editor.container.addEventListener("contextmenu", (e) => e.preventDefault());
   
-    // Disable Ctrl+C and Ctrl+V
-    editor.commands.addCommand({
-      name: "disableCopyPaste",
-      bindKey: { win: "Ctrl-C|Ctrl-V", mac: "Command-C|Command-V" },
-      exec: () => {}, // No operation
-      readOnly: true, // Prevents modifying content in read-only mode
-    });
+    // // Disable Ctrl+C and Ctrl+V
+    // editor.commands.addCommand({
+    //   name: "disableCopyPaste",
+    //   bindKey: { win: "Ctrl-C|Ctrl-V", mac: "Command-C|Command-V" },
+    //   exec: () => {}, // No operation
+    //   readOnly: true, // Prevents modifying content in read-only mode
+    // });
   };
 
   return (
