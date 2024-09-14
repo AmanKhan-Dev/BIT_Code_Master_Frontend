@@ -164,8 +164,8 @@ const QuestionDetail = () => {
 
   const handleEditorLoad = (editor) => {
     editor.setOptions({
-      enableBasicAutocompletion: true,
-      enableLiveAutocompletion: true,
+      // enableBasicAutocompletion: true,
+      // enableLiveAutocompletion: true,
     });
   
     // Disable copy, paste, and cut
