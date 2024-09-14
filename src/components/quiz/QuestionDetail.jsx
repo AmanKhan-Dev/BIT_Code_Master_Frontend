@@ -169,20 +169,20 @@ const QuestionDetail = () => {
     });
   
     // Disable copy, paste, and cut
-    // editor.container.addEventListener("copy", (e) => e.preventDefault());
-    // editor.container.addEventListener("paste", (e) => e.preventDefault());
-    // editor.container.addEventListener("cut", (e) => e.preventDefault());
+    editor.container.addEventListener("copy", (e) => e.preventDefault());
+    editor.container.addEventListener("paste", (e) => e.preventDefault());
+    editor.container.addEventListener("cut", (e) => e.preventDefault());
   
-    // // Disable right-click context menu
-    // editor.container.addEventListener("contextmenu", (e) => e.preventDefault());
+    // Disable right-click context menu
+    editor.container.addEventListener("contextmenu", (e) => e.preventDefault());
   
-    // // Disable Ctrl+C and Ctrl+V
-    // editor.commands.addCommand({
-    //   name: "disableCopyPaste",
-    //   bindKey: { win: "Ctrl-C|Ctrl-V", mac: "Command-C|Command-V" },
-    //   exec: () => {}, // No operation
-    //   readOnly: true, // Prevents modifying content in read-only mode
-    // });
+    // Disable Ctrl+C and Ctrl+V
+    editor.commands.addCommand({
+      name: "disableCopyPaste",
+      bindKey: { win: "Ctrl-C|Ctrl-V", mac: "Command-C|Command-V" },
+      exec: () => {}, // No operation
+      readOnly: true, // Prevents modifying content in read-only mode
+    });
   };
   return (
     <div className="question-detail-container">
@@ -210,18 +210,19 @@ const QuestionDetail = () => {
       </div>
 
       <div className="code-editor-section">
-        <AceEditor
-          mode={language}
-          theme="github"
-          name="codeEditor"
-          value={sourceCode}
-          onChange={(newValue) => setSourceCode(newValue)}
-          width="100%"
-          height="400px"
-          editorProps={{ $blockScrolling: true }}
-          style={{ borderRadius: '4px', border: '1px solid #ddd' }}
-          onLoad={handleEditorLoad}
-        />
+      <AceEditor
+  mode={language}
+  theme="github"
+  name="codeEditor"
+  value={sourceCode}
+  onChange={(newValue) => setSourceCode(newValue)}
+  width="100%"
+  height="70%"  // Increased height
+  editorProps={{ $blockScrolling: true }}
+  style={{ borderRadius: '4px', border: '1px solid #ddd', minHeight: '500px' }}  // Fixed minimum height
+  onLoad={handleEditorLoad}
+/>
+
         <form onSubmit={handleVerifySubmit} className="code-form">
           <div className="form-group">
             <label htmlFor="language">Language:</label>
