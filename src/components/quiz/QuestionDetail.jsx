@@ -74,38 +74,43 @@ const QuestionDetail = () => {
   };
 
   const handleVerifySubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const compileResponse = await axios.post('http://localhost:8080/api/compiler/compile', {
-        sourceCode,
-        language: language === 'c_cpp' ? 'C++' : 'C',
-        userInput
-      });
+  e.preventDefault();
+  setLoading(true);
+  try {
+    // Compile code first
+    const compileResponse = await axios.post('http://localhost:8080/api/compiler/compile', {
+      sourceCode,
+      language: language === 'c_cpp' ? 'C++' : 'C',
+      userInput
+    });
 
-      const resultData = compileResponse.data;
-      setResult(resultData);
+    const resultData = compileResponse.data;
+    setResult(resultData);
 
-      const verifyResponse = await axios.post('http://localhost:8080/api/compiler/compileTests', {
-        sourceCode,
-        language,
-        questionSetId,
-        questionNo,
-      });
+    // Send request to verify the compiled code against the test cases
+    const verifyResponse = await axios.post('http://localhost:8080/api/compiler/compileTests', {
+      sourceCode,
+      language,
+      questionSetId,
+      questionNo,
+    });
 
-      setResponse(verifyResponse.data);
-      const testCasesPassed = checkTestCases(resultData);
-      if (verifyResponse.status === 200 && testCasesPassed) {
-        await saveResult(resultData); // Save result after verification
-        alert("All Test Case Verified");  
-        navigate(-1); // Redirect to the previous page
-      }
-    } catch (error) {
-      setResponse(`Error: ${error.response ? error.response.data : error.message}`);
-    } finally {
-      setLoading(false);
+    setResponse(verifyResponse.data);
+    const testCasesPassed = checkTestCases(resultData);
+
+    if (verifyResponse.status === 200 && testCasesPassed) {
+      await saveResult(resultData); // Save result after verification
+      alert("All test cases passed!");  // Show this alert if all test cases pass
+      navigate(-1); // Redirect to the previous page
+    } else {
+      alert("Some test cases failed.");  // Show this alert if any test case fails
     }
-  };
+  } catch (error) {
+    setResponse(`Error: ${error.response ? error.response.data : error.message}`);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleRunCode = async (e) => {
     e.preventDefault();
@@ -163,26 +168,26 @@ const QuestionDetail = () => {
   };
 
   const handleEditorLoad = (editor) => {
-    editor.setOptions({
-      // enableBasicAutocompletion: true,
-      // enableLiveAutocompletion: true,
-    });
+    // editor.setOptions({
+    //   // enableBasicAutocompletion: true,
+    //   // enableLiveAutocompletion: true,
+    // });
   
-    // Disable copy, paste, and cut
-    editor.container.addEventListener("copy", (e) => e.preventDefault());
-    editor.container.addEventListener("paste", (e) => e.preventDefault());
-    editor.container.addEventListener("cut", (e) => e.preventDefault());
+    // // Disable copy, paste, and cut
+    // editor.container.addEventListener("copy", (e) => e.preventDefault());
+    // editor.container.addEventListener("paste", (e) => e.preventDefault());
+    // editor.container.addEventListener("cut", (e) => e.preventDefault());
   
-    // Disable right-click context menu
-    editor.container.addEventListener("contextmenu", (e) => e.preventDefault());
+    // // Disable right-click context menu
+    // editor.container.addEventListener("contextmenu", (e) => e.preventDefault());
   
-    // Disable Ctrl+C and Ctrl+V
-    editor.commands.addCommand({
-      name: "disableCopyPaste",
-      bindKey: { win: "Ctrl-C|Ctrl-V", mac: "Command-C|Command-V" },
-      exec: () => {}, // No operation
-      readOnly: true, // Prevents modifying content in read-only mode
-    });
+    // // Disable Ctrl+C and Ctrl+V
+    // editor.commands.addCommand({
+    //   name: "disableCopyPaste",
+    //   bindKey: { win: "Ctrl-C|Ctrl-V", mac: "Command-C|Command-V" },
+    //   exec: () => {}, // No operation
+    //   readOnly: true, // Prevents modifying content in read-only mode
+    // });
   };
   return (
     <div className="question-detail-container">
