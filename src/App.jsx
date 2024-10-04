@@ -23,6 +23,7 @@ import CodeCompiler from "./components/question/CodeCompiler";
 import CompileTests from "./components/question/CodeCompiler";
 import JoinChallenge from "./components/quiz/JoinTest";
 import Dashboard from "../utils/UserDashboard";
+import GCCConsole from "./components/quiz/GCCConsole";
 
 const App = () => {
   const location = useLocation();
@@ -54,7 +55,7 @@ const App = () => {
         <Route path="/join" element={<JoinChallenge />} />
         <Route path="/pallate/:questionSetId" element={<Pallate />} />
         <Route path="/dashboard" element={<Dashboard />} />
-    
+        <Route path="/gccc" element={<GCCConsole />} />
       </Routes>
     </main>
   );
