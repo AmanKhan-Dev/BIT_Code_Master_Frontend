@@ -19,7 +19,7 @@ const QuestionDetail = () => {
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState('');
-  const [saveMessage, setSaveMessage] = useState(''); // For displaying save message
+  const [saveMessage, setSaveMessage] = useState('');
   
   const { email, userData } = location.state || {}; // Retrieve user details from location state
 
@@ -75,56 +75,56 @@ const QuestionDetail = () => {
   };
 
   const handleVerifySubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  try {
-    const compileResponse = await axios.post('http://localhost:8080/api/compiler/compile', {
-      sourceCode,
-      language: language === 'c_cpp' ? 'C++' : 'C',
-      userInput
-    });
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const compileResponse = await axios.post('http://localhost:8080/api/compiler/compile', {
+        sourceCode,
+        language: language === 'c_cpp' ? 'C++' : 'C',
+        userInput
+      });
 
-    const resultData = compileResponse.data;
-    setResult(resultData);
+      const resultData = compileResponse.data;
+      setResult(resultData);
 
-    const verifyResponse = await axios.post('http://localhost:8080/api/compiler/compileTests', {
-      sourceCode,
-      language,
-      questionSetId,
-      questionNo,
-    });
+      const verifyResponse = await axios.post('http://localhost:8080/api/compiler/compileTests', {
+        sourceCode,
+        language,
+        questionSetId,
+        questionNo,
+      });
 
-    setResponse(verifyResponse.data);
-    const testCasesPassed = checkTestCases(resultData);
+      setResponse(verifyResponse.data);
+      const testCasesPassed = checkTestCases(resultData);
 
-    if (verifyResponse.status === 200 && testCasesPassed) {
-      await saveResult(resultData); // Save result after verification
-      await handleSaveCode(); // Automatically save the code
-      alert("All test cases passed! Code saved successfully.");
-      navigate(-1);
-    } else {
-      alert("Some test cases failed.");
+      if (verifyResponse.status === 200 && testCasesPassed) {
+        await saveResult(resultData); // Save result after verification
+        await handleSaveCode(); // Automatically save the code
+        alert("All test cases passed! Code saved successfully.");
+        navigate(-1);
+      } else {
+        alert("Some test cases failed.");
+      }
+    } catch (error) {
+      setResponse(`Error: ${error.response ? error.response.data : error.message}`);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    setResponse(`Error: ${error.response ? error.response.data : error.message}`);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleSaveCode = async () => {
     try {
       const saveCodeResponse = await axios.post('http://localhost:8080/code/save', {
         codeSaverId: {
-          student_email: email,  // Pass email from state
-          question_set_id: questionSetId,  // Use questionSetId from params
-          question_no: questionNo  // Use questionNo from params
+          student_email: email,
+          question_set_id: questionSetId,
+          question_no: questionNo
         },
-        code: sourceCode // Code from editor
+        code: sourceCode
       });
-      setSaveMessage('Code saved successfully');  // Set success message
+      setSaveMessage('Code saved successfully');
     } catch (error) {
-      setSaveMessage(`Error saving code: ${error.response ? error.response.data : error.message}`); // Handle error
+      setSaveMessage(`Error saving code: ${error.response ? error.response.data : error.message}`);
     }
   };
 
@@ -183,6 +183,35 @@ const QuestionDetail = () => {
     }
   };
 
+  const handleEditorLoad = (editor) => {
+    editor.setOptions({
+      // enableBasicAutocompletion: true,
+      // enableLiveAutocompletion: true,
+    });
+
+    // Disable copy, paste, and cut
+    editor.container.addEventListener("copy", (e) => e.preventDefault());
+    editor.container.addEventListener("paste", (e) => e.preventDefault());
+    editor.container.addEventListener("cut", (e) => e.preventDefault());
+
+    // Disable right-click context menu
+    editor.container.addEventListener("contextmenu", (e) => e.preventDefault());
+
+    // Disable Ctrl+C and Ctrl+V
+    editor.commands.addCommand({
+      name: "disableCopyPaste",
+      bindKey: { win: "Ctrl-C|Ctrl-V", mac: "Command-C|Command-V" },
+      exec: () => {}, // No operation
+      readOnly: true, // Prevents modifying content in read-only mode
+    });
+
+    // Disable clipboard actions on the entire document
+    document.addEventListener("copy", (e) => e.preventDefault());
+    document.addEventListener("cut", (e) => e.preventDefault());
+    document.addEventListener("paste", (e) => e.preventDefault());
+  };
+
+
   return (
     <div className="question-detail-container">
       <div className="question-info">
@@ -219,6 +248,7 @@ const QuestionDetail = () => {
           height="70%" 
           editorProps={{ $blockScrolling: true }}
           style={{ borderRadius: '4px', border: '1px solid #ddd', minHeight: '500px' }}
+        //  onLoad={handleEditorLoad} disable copy paste
         />
 
         <form onSubmit={handleVerifySubmit} className="code-form">
