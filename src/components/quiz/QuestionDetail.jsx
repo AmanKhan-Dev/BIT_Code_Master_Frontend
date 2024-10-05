@@ -19,6 +19,7 @@ const QuestionDetail = () => {
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState('');
+  const [saveMessage, setSaveMessage] = useState(''); // For displaying save message
   
   const { email, userData } = location.state || {}; // Retrieve user details from location state
 
@@ -41,10 +42,10 @@ const QuestionDetail = () => {
       await axios.post('http://localhost:8080/api/results/saveResult', {
         questionSetId,
         questionNo,
-        email,  // Use the email passed from Pallate
-        studentName: userData.full_name, // Use the full name passed from Pallate
-        prn: userData.prn_no, // Use the PRN passed from Pallate
-        studentRollNo: userData.roll_no, // Use the roll number passed from Pallate
+        email,
+        studentName: userData.full_name,
+        prn: userData.prn_no,
+        studentRollNo: userData.roll_no,
         solvingStatus: 1, 
       });
     } catch (error) {
@@ -77,7 +78,6 @@ const QuestionDetail = () => {
   e.preventDefault();
   setLoading(true);
   try {
-    // Compile code first
     const compileResponse = await axios.post('http://localhost:8080/api/compiler/compile', {
       sourceCode,
       language: language === 'c_cpp' ? 'C++' : 'C',
@@ -87,7 +87,6 @@ const QuestionDetail = () => {
     const resultData = compileResponse.data;
     setResult(resultData);
 
-    // Send request to verify the compiled code against the test cases
     const verifyResponse = await axios.post('http://localhost:8080/api/compiler/compileTests', {
       sourceCode,
       language,
@@ -100,10 +99,11 @@ const QuestionDetail = () => {
 
     if (verifyResponse.status === 200 && testCasesPassed) {
       await saveResult(resultData); // Save result after verification
-      alert("All test cases passed!");  // Show this alert if all test cases pass
-      navigate(-1); // Redirect to the previous page
+      await handleSaveCode(); // Automatically save the code
+      alert("All test cases passed! Code saved successfully.");
+      navigate(-1);
     } else {
-      alert("Some test cases failed.");  // Show this alert if any test case fails
+      alert("Some test cases failed.");
     }
   } catch (error) {
     setResponse(`Error: ${error.response ? error.response.data : error.message}`);
@@ -111,6 +111,22 @@ const QuestionDetail = () => {
     setLoading(false);
   }
 };
+
+  const handleSaveCode = async () => {
+    try {
+      const saveCodeResponse = await axios.post('http://localhost:8080/code/save', {
+        codeSaverId: {
+          student_email: email,  // Pass email from state
+          question_set_id: questionSetId,  // Use questionSetId from params
+          question_no: questionNo  // Use questionNo from params
+        },
+        code: sourceCode // Code from editor
+      });
+      setSaveMessage('Code saved successfully');  // Set success message
+    } catch (error) {
+      setSaveMessage(`Error saving code: ${error.response ? error.response.data : error.message}`); // Handle error
+    }
+  };
 
   const handleRunCode = async (e) => {
     e.preventDefault();
@@ -167,28 +183,6 @@ const QuestionDetail = () => {
     }
   };
 
-  const handleEditorLoad = (editor) => {
-    // editor.setOptions({
-    //   // enableBasicAutocompletion: true,
-    //   // enableLiveAutocompletion: true,
-    // });
-  
-    // // Disable copy, paste, and cut
-    // editor.container.addEventListener("copy", (e) => e.preventDefault());
-    // editor.container.addEventListener("paste", (e) => e.preventDefault());
-    // editor.container.addEventListener("cut", (e) => e.preventDefault());
-  
-    // // Disable right-click context menu
-    // editor.container.addEventListener("contextmenu", (e) => e.preventDefault());
-  
-    // // Disable Ctrl+C and Ctrl+V
-    // editor.commands.addCommand({
-    //   name: "disableCopyPaste",
-    //   bindKey: { win: "Ctrl-C|Ctrl-V", mac: "Command-C|Command-V" },
-    //   exec: () => {}, // No operation
-    //   readOnly: true, // Prevents modifying content in read-only mode
-    // });
-  };
   return (
     <div className="question-detail-container">
       <div className="question-info">
@@ -215,18 +209,17 @@ const QuestionDetail = () => {
       </div>
 
       <div className="code-editor-section">
-      <AceEditor
-  mode={language}
-  theme="github"
-  name="codeEditor"
-  value={sourceCode}
-  onChange={(newValue) => setSourceCode(newValue)}
-  width="100%"
-  height="70%"  // Increased height
-  editorProps={{ $blockScrolling: true }}
-  style={{ borderRadius: '4px', border: '1px solid #ddd', minHeight: '500px' }}  // Fixed minimum height
-  onLoad={handleEditorLoad}
-/>
+        <AceEditor
+          mode={language}
+          theme="github"
+          name="codeEditor"
+          value={sourceCode}
+          onChange={(newValue) => setSourceCode(newValue)}
+          width="100%"
+          height="70%" 
+          editorProps={{ $blockScrolling: true }}
+          style={{ borderRadius: '4px', border: '1px solid #ddd', minHeight: '500px' }}
+        />
 
         <form onSubmit={handleVerifySubmit} className="code-form">
           <div className="form-group">
@@ -260,10 +253,23 @@ const QuestionDetail = () => {
             >
               Run Code
             </button>
+            <button
+              onClick={handleSaveCode}  // Save Code Button
+              className="save-code-button"
+            >
+              Save Code
+            </button>
           </div>
           {loading && <div className="loading">Loading...</div>}
           <pre className="result-output">{result}</pre>
         </form>
+
+        {saveMessage && ( // Show the save message
+          <div className="save-message">
+            <p>{saveMessage}</p>
+          </div>
+        )}
+
         {response && (
           <div className="response-container">
             <p><strong>Response:</strong></p>

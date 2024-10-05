@@ -19,11 +19,12 @@ import Pallate from "./components/quiz/Question-Pallate";
 import AddCodingQuestion from "./components/question/AddCodingQuestion";
 import AdminLogin from "./admin/Admin_Login";
 import QuestionDetail from "./components/quiz/QuestionDetail";
-import CodeCompiler from "./components/question/CodeCompiler";
+
 import CompileTests from "./components/question/CodeCompiler";
 import JoinChallenge from "./components/quiz/JoinTest";
 import Dashboard from "../utils/UserDashboard";
-import GCCConsole from "./components/quiz/GCCConsole";
+import JdoodleEmbed from "./components/question/JdoodleEnbad";
+
 
 const App = () => {
   const location = useLocation();
@@ -55,7 +56,8 @@ const App = () => {
         <Route path="/join" element={<JoinChallenge />} />
         <Route path="/pallate/:questionSetId" element={<Pallate />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/gccc" element={<GCCConsole />} />
+        <Route path="/jj" element={<JdoodleEmbed/>} />
+   
       </Routes>
     </main>
   );
