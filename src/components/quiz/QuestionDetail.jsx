@@ -33,9 +33,21 @@ const QuestionDetail = () => {
         setError('Error fetching question data');
       }
     };
-
+  
     fetchQuestionData();
-  }, [questionSetId, questionNo]);
+    fetchSavedCode(); // Fetch saved code
+  }, [questionSetId, questionNo, email]);
+  
+  const fetchSavedCode = async () => {
+    try {
+      const url = `http://localhost:8080/code/get?student_email=${email}&question_set_id=${questionSetId}&question_no=${questionNo}`;
+      const response = await axios.get(url);
+      setSourceCode(response.data); // Set the saved code in the editor
+    } catch (err) {
+      console.error('Error fetching saved code:', err);
+    }
+  };
+  
 
   const saveResult = async (resultData) => {
     try {
@@ -103,7 +115,7 @@ const QuestionDetail = () => {
         alert("All test cases passed! Code saved successfully.");
         navigate(-1);
       } else {
-        alert("Some test cases failed.");
+        alert("Sample Input Or Output Mismatched");
       }
     } catch (error) {
       setResponse(`Error: ${error.response ? error.response.data : error.message}`);
@@ -122,7 +134,7 @@ const QuestionDetail = () => {
         },
         code: sourceCode
       });
-      setSaveMessage('Code saved successfully');
+      alert("Code Saved Successfully !")
     } catch (error) {
       setSaveMessage(`Error saving code: ${error.response ? error.response.data : error.message}`);
     }
