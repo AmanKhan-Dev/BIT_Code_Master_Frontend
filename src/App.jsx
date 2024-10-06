@@ -24,6 +24,7 @@ import CompileTests from "./components/question/CodeCompiler";
 import JoinChallenge from "./components/quiz/JoinTest";
 import Dashboard from "../utils/UserDashboard";
 import JdoodleEmbed from "./components/question/JdoodleEnbad";
+import Card from "./components/quiz/Card";
 
 
 const App = () => {
@@ -57,6 +58,7 @@ const App = () => {
         <Route path="/pallate/:questionSetId" element={<Pallate />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/jj" element={<JdoodleEmbed/>} />
+        <Route path="/card" element={<Card/>} />
    
       </Routes>
     </main>

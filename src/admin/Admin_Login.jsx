@@ -1,26 +1,31 @@
 import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom"; // Import useNavigate hook
+import { useNavigate } from "react-router-dom";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate(); // Initialize the useNavigate hook
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       const response = await axios.post("http://localhost:8080/admin/loginAdmin", {
         email,
-        admin_password: password, 
+        admin_password: password,
       });
-  
+
       if (response.status === 200) {
         alert("Login Successful");
-        navigate("/admin"); 
+        
+        // Store admin details in localStorage
+        localStorage.setItem("adminEmail", email); // Store email to fetch admin details later
+        localStorage.setItem("adminDetails", JSON.stringify(response.data.admin)); // Store full admin details
+
+        navigate("/admin");
       }
     } catch (err) {
       if (err.response && err.response.status === 401) {
@@ -30,7 +35,6 @@ const AdminLogin = () => {
       }
     }
   };
-  
 
   return (
     <StyledWrapper>
@@ -63,15 +67,13 @@ const AdminLogin = () => {
           <input value="Sign In" type="submit" className="login-button" />
         </form>
         {error && <p style={{ color: "red" }}>{error}</p>}
-        
         <span className="agreement">
-          <a href="#">Learn user licence agreement</a>
+          <a href="#">Learn user license agreement</a>
         </span>
       </div>
     </StyledWrapper>
   );
 };
-
 
 const StyledWrapper = styled.div`
   display: flex;
