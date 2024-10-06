@@ -1,262 +1,261 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react";
+import AceEditor from 'react-ace';
+import 'ace-builds/src-noconflict/mode-c_cpp';
+import 'ace-builds/src-noconflict/theme-github';
+import axios from "axios";
 
-import { Link } from "react-router-dom"
-import { createQuestion, getSubjects } from "../../../utils/QuizService"
 
 const AddQuestion = () => {
-	const [question, setQuestionText] = useState("")
-	const [questionType, setQuestionType] = useState("single")
-	const [choices, setChoices] = useState([""])
-	const [correctAnswers, setCorrectAnswers] = useState([""])
-	const [subject, setSubject] = useState("")
-	const [newSubject, setNewSubject] = useState("")
-	const [subjectOptions, setSubjectOptions] = useState([""])
+  const [question, setQuestionText] = useState("");
+  const [questionDescription, setQuestionDescription] = useState("");
+  const [questionCategory, setQuestionCategory] = useState("");
+  const [newCategory, setNewCategory] = useState("");
+  const [categoryOptions, setCategoryOptions] = useState([]);
+  const [testCases, setTestCases] = useState([{ input: "", output: "" }]);
+  const [sampleInput, setSampleInput] = useState("");
+  const [sampleOutput, setSampleOutput] = useState("");
 
-	useEffect(() => {
-		fetchSubjects()
-	}, [])
+  const [sourceCode, setSourceCode] = useState('');
+  const [language, setLanguage] = useState('c_cpp');
+  const [userInput, setUserInput] = useState('');
+  const [result, setResult] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState('');
 
-	const fetchSubjects = async () => {
-		try {
-			const subjectsData = await getSubjects()
-			setSubjectOptions(subjectsData)
-		} catch (error) {
-			console.error(error)
-		}
-	}
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
-	const handleAddChoice = () => {
-		setChoices([...choices, ""]); // Add an empty string as a new choice
-	  };
-	  
+  const fetchCategories = async () => {
+    try {
+      const categoriesData = await getCategories(); // Call your backend to get categories
+      setCategoryOptions(categoriesData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-	const handleRemoveChoice = (index) => {
-		setChoices(choices.filter((choice, i) => i !== index))
-	}
+  const handleAddTestCase = () => {
+    setTestCases([...testCases, { input: "", output: "" }]);
+  };
 
-	const handleChoiceChange = (index, value) => {
-		setChoices(choices.map((choice, i) => (i === index ? value : choice)))
-	}
+  const handleRemoveTestCase = (index) => {
+    setTestCases(testCases.filter((_, i) => i !== index));
+  };
 
-	const handleCorrectAnswerChange = (index, value) => {
-		setCorrectAnswers(correctAnswers.map((answer, i) => (i === index ? value : answer)))
-	}
+  const handleTestCaseChange = (index, field, value) => {
+    const updatedTestCases = testCases.map((testCase, i) =>
+      i === index ? { ...testCase, [field]: value } : testCase
+    );
+    setTestCases(updatedTestCases);
+  };
 
-	const handleAddCorrectAnswer = () => {
-		setCorrectAnswers([...correctAnswers, ""])
-	}
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const result = {
+        question,
+        questionDescription,
+        questionCategory,
+        sampleInput,
+        sampleOutput,
+        testCases
+      };
 
-	const handleRemoveCorrectAnswer = (index) => {
-		setCorrectAnswers(correctAnswers.filter((answer, i) => i !== index))
-	}
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		try {
-		  // Store the correct answer as the full choice text
-		  const formattedCorrectAnswers = correctAnswers
-			.filter((answer) => answer.trim() !== "")
-			.map((answer) => {
-			  // Ensure that the correct answer matches one of the available choices
-			  const matchedChoice = choices.find(
-				(choice) => choice.trim().toLowerCase() === answer.trim().toLowerCase()
-			  );
-			  return matchedChoice ? matchedChoice : null;
-			})
-			.filter((choice) => choice !== null); // Filter out any unmatched answers
-	  
-		  const result = {
-			question,
-			questionType,
-			choices,
-			correctAnswers: formattedCorrectAnswers, // Store the correct answers as full choice texts
-			subject
-		  };
-	  
-		  console.log("Data to be submitted:", result);
-	  
-		  await createQuestion(result);
-	  
-		  // Reset the form fields
-		  setQuestionText("");
-		  setQuestionType("single");
-		  setChoices([""]);
-		  setCorrectAnswers([""]);
-		  setSubject("");
-		} catch (error) {
-		  console.error("Error saving the question:", error);
-		}
-	  };
-	  
-	const handleAddSubject = () => {
-		if (newSubject.trim() !== "") {
-			setSubject(newSubject.trim())
-			setSubjectOptions([...subjectOptions, newSubject.trim()])
-			setNewSubject("")
-		}
-	}
+      console.log("Data to be submitted:", result);
 
-	return (
-		<div className="container">
-			<div className="row justify-content-center">
-				<div className="col-md-6  mt-5">
-					<div className="card">
-						<div className="card-header">
-							<h5 className="card-title">Add New Questions</h5>
-						</div>
-						<div className="card-body">
-							<form onSubmit={handleSubmit} className="p-2">
-								<div className="mb-3">
-									<label htmlFor="subject" className="form-label text-info">
-										Select a Subject
-									</label>
-									<select
-										id="subject"
-										value={subject}
-										onChange={(e) => setSubject(e.target.value)}
-										className="form-control">
-										<option value="">Select subject</option>
-										<option value={"New"}>Add New</option>
-										{subjectOptions.map((option) => (
-											<option key={option} value={option}>
-												{option}
-											</option>
-										))}
-									</select>
-								</div>
+      await createQuestion(result);
 
-								{subject === "New" && (
-									<div className="mb-3">
-										<label htmlFor="new-subject" className="form-label text-info">
-											Add New Subject
-										</label>
-										<input
-											type="text"
-											id="new-subject"
-											value={newSubject}
-											onChange={(event) => setNewSubject(event.target.value)}
-											className="form-control"
-										/>
-										<button
-											type="button"
-											onClick={handleAddSubject}
-											className="btn btn-outline-primary mt-2">
-											Add Subject
-										</button>
-									</div>
-								)}
-								<div className="mb-3">
-									<label htmlFor="question-text" className="form-label text-info">
-										Question
-									</label>
-									<textarea
-										className="form-control"
-										rows={4}
-										value={question}
-										onChange={(e) => setQuestionText(e.target.value)}></textarea>
-								</div>
-								<div className="mb-3">
-									<label htmlFor="question-type" className="form-label text-info">
-										Question type
-									</label>
-									<select
-										id="question-type"
-										value={questionType}
-										onChange={(event) => setQuestionType(event.target.value)}
-										className="form-control">
-										<option value="single">Single Answer</option>
-										<option value="multiple">Multiple Answer</option>
-									</select>
-								</div>
-								<div className="mb-3">
-									<label htmlFor="choices" className="form-label text-primary">
-										Choices
-									</label>
-									{choices.map((choice, index) => (
-										<div key={index} className="input-group mb-3">
-											<input
-												type="text"
-												value={choice}
-												onChange={(e) => handleChoiceChange(index, e.target.value)}
-												className="form-control"
-											/>
-											<button
-												type="button"
-												onClick={() => handleRemoveChoice(index)}
-												className="btn btn-outline-danger">
-												Remove
-											</button>
-										</div>
-									))}
-									<button
-										type="button"
-										onClick={handleAddChoice}
-										className="btn btn-outline-primary">
-										Add Choice
-									</button>
-								</div>
-								{questionType === "single" && (
-									<div className="mb-3">
-										<label htmlFor="answer" className="form-label text-success">
-											Correct Answer
-										</label>
-										<input
-											type="text"
-											className="form-control"
-											id="answer"
-											value={correctAnswers[0]}
-											onChange={(e) => handleCorrectAnswerChange(0, e.target.value)}
-										/>
-									</div>
-								)}
-								{questionType === "multiple" && (
-									<div className="mb-3">
-										<label htmlFor="answer" className="form-label text-success">
-											Correct Answer(s)
-										</label>
-										{correctAnswers.map((answer, index) => (
-											<div key={index} className="d-flex mb-2">
-												<input
-													type="text"
-													className="form-control me-2"
-													value={answer}
-													onChange={(e) => handleCorrectAnswerChange(index, e.target.value)}
-												/>
-												{index > 0 && (
-													<button
-														type="button"
-														className="btn btn-danger"
-														onClick={() => handleRemoveCorrectAnswer(index)}>
-														Remove
-													</button>
-												)}
-											</div>
-										))}
-										<button
-											type="button"
-											className="btn btn-outline-info"
-											onClick={handleAddCorrectAnswer}>
-											Add Correct Answer
-										</button>
-									</div>
-								)}
+      setQuestionText("");
+      setQuestionDescription("");
+      setQuestionCategory("");
+      setSampleInput("");
+      setSampleOutput("");
+      setTestCases([{ input: "", output: "" }]);
+    } catch (error) {
+      console.error("Error saving the question:", error);
+    }
+  };
 
-								{!correctAnswers.length && <p>Please enter at least one correct answer.</p>}
+ 
+  const handleRunCode = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setResponse(""); // Clear previous response
 
-								<div className="btn-group">
-									<button type="submit" className="btn btn-outline-success mr-2">
-										Save Question
-									</button>
-									<Link to={"/all-quizzes"} className="btn btn-outline-primary ml-2">
-										Back to existing questions
-									</Link>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	)
-}
+    try {
+        const response = await axios.post('http://localhost:8080/api/compiler/compile', {
+            sourceCode,
+            language: language === 'c_cpp' ? 'C++' : 'C',
+            userInput,
+        });
+
+        const resultData = response.data;
+        setResult(resultData); // Set the raw response directly
+    } catch (error) {
+        // Log the error for debugging purposes
+        console.error("Error running code:", error);
+
+        // Get the raw response from the error
+        const errorMessage = error.response
+            ? error.response.data
+            : error.message || 'An unexpected error occurred';
+
+        setResult(errorMessage); // Display the raw error message directly
+    } finally {
+        setLoading(false);
+    }
+};
+
+  return (
+    <div className="add-question-container">
+      <div className="code-editor-section">
+        <h5>Code Editor</h5>
+        <AceEditor
+          mode={language}
+          theme="github"
+          name="codeEditor"
+          value={sourceCode}
+          onChange={(newValue) => setSourceCode(newValue)}
+          width="100%"
+          height="400px"
+          editorProps={{ $blockScrolling: true }}
+          style={{ borderRadius: '4px', border: '1px solid #ddd' }}
+        />
+        <textarea
+          value={userInput}
+          onChange={(e) => setUserInput(e.target.value)}
+          placeholder="Enter input for your program (if any)"
+          rows="4"
+          className="user-input"
+        />
+        <button
+          onClick={handleRunCode}
+          className="btn btn-outline-primary mt-2"
+        >
+          Run Code
+        </button>
+        {loading && <div className="loading">Running...</div>}
+        <pre className="result-output">{result}</pre>
+      </div>
+
+      <div className="form-section">
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label htmlFor="category" className="form-label">Select a Category</label>
+            <select
+              id="category"
+              value={questionCategory}
+              onChange={(e) => setQuestionCategory(e.target.value)}
+              className="form-control"
+            >
+              <option value="">Select category</option>
+              <option value="New">Add New</option>
+              {categoryOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {questionCategory === "New" && (
+            <div className="mb-3">
+              <input
+                type="text"
+                placeholder="Add New Category"
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                className="form-control"
+              />
+            </div>
+          )}
+
+          <div className="mb-3">
+            <label htmlFor="question" className="form-label">Question</label>
+            <textarea
+              id="question"
+              value={question}
+              onChange={(e) => setQuestionText(e.target.value)}
+              className="form-control"
+            />
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="description" className="form-label">Description</label>
+            <textarea
+              id="description"
+              value={questionDescription}
+              onChange={(e) => setQuestionDescription(e.target.value)}
+              className="form-control"
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">Sample Input</label>
+            <textarea
+              className="form-control"
+              rows="2"
+              value={sampleInput}
+              onChange={(e) => setSampleInput(e.target.value)}
+            ></textarea>
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">Sample Output</label>
+            <textarea
+              className="form-control"
+              rows="2"
+              value={sampleOutput}
+              onChange={(e) => setSampleOutput(e.target.value)}
+            ></textarea>
+          </div>
+
+          <div className="test-cases-section">
+            <label className="form-label">Test Cases</label>
+            {testCases.map((testCase, index) => (
+              <div key={index} className="mb-2">
+                <input
+                  type="text"
+                  placeholder="Test Case Input"
+                  value={testCase.input}
+                  onChange={(e) => handleTestCaseChange(index, "input", e.target.value)}
+                  className="form-control mb-2"
+                />
+                <input
+                  type="text"
+                  placeholder="Test Case Output"
+                  value={testCase.output}
+                  onChange={(e) => handleTestCaseChange(index, "output", e.target.value)}
+                  className="form-control mb-2"
+                />
+                {index > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveTestCase(index)}
+                    className="btn btn-outline-danger mb-2"
+                  >
+                    Remove Test Case
+                  </button>
+                )}
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={handleAddTestCase}
+              className="btn btn-outline-info"
+            >
+              Add Test Case
+            </button>
+          </div>
+
+          <button type="submit" className="btn btn-outline-success mt-2">
+            Save Question
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 export default AddQuestion
