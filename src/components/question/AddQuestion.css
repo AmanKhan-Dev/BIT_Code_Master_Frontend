@@ -1,0 +1,39 @@
+.add-question-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .code-editor-section {
+    width: 40%;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+    overflow-y: auto; /* Enables vertical scrolling */
+  }
+  
+  .form-section {
+    width: 60%;
+    padding: 20px;
+    overflow-y: auto; /* Enables vertical scrolling */
+  }
+  
+  .user-input {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+  
+  .result-output {
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+  }
+  
+  .loading {
+    font-weight: bold;
+    color: #007bff;
+  }
+  

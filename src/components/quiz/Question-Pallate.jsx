@@ -21,7 +21,7 @@ const Pallate = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/codingQuestions/allCodingQuestions', {
+        const response = await axios.get('http://localhost:8080/codingQuestions/questionsBySetId', {
           params: { questionSetId: questionSetId || 'BTCOCOC505' },
         });
 
