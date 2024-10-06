@@ -8,6 +8,8 @@ const formStyle = {
   backgroundColor: '#f4f4f4',
   borderRadius: '8px',
   boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+  display: 'flex',
+  flexDirection: 'column',
 };
 
 const labelStyle = {
@@ -22,6 +24,7 @@ const inputStyle = {
   marginBottom: '16px',
   border: '1px solid #ddd',
   borderRadius: '4px',
+  transition: 'border-color 0.3s',
 };
 
 const buttonStyle = {
@@ -32,6 +35,7 @@ const buttonStyle = {
   borderRadius: '4px',
   cursor: 'pointer',
   fontSize: '16px',
+  transition: 'background-color 0.3s',
 };
 
 const buttonHoverStyle = {
@@ -42,7 +46,8 @@ const QuestionSetForm = () => {
   const [questionSet, setQuestionSet] = useState({
     questionSetId: '',
     setPassword: '',
-    questionSetName: ''
+    questionSetName: '',
+    questionSetDescription: '',
   });
   const [responseMessage, setResponseMessage] = useState('');
 
@@ -63,7 +68,7 @@ const QuestionSetForm = () => {
 
   return (
     <div style={{ textAlign: 'center' }}>
-      <h2 style={{ color: '#007bff' }}>Add New Question Set</h2>
+      <h2 style={{ color: '#007bff', marginBottom: '20px' }}>Add New Question Set</h2>
       <form onSubmit={handleSubmit} style={formStyle}>
         <div>
           <label htmlFor="questionSetId" style={labelStyle}>Set ID:</label>
@@ -101,11 +106,28 @@ const QuestionSetForm = () => {
             style={inputStyle}
           />
         </div>
-        <button type="submit" style={buttonStyle} onMouseOver={(e) => e.currentTarget.style.backgroundColor = buttonHoverStyle.backgroundColor} onMouseOut={(e) => e.currentTarget.style.backgroundColor = buttonStyle.backgroundColor}>
+        <div>
+          <label htmlFor="questionSetDescription" style={labelStyle}>Description:</label>
+          <textarea
+            id="questionSetDescription"
+            name="questionSetDescription"
+            value={questionSet.questionSetDescription}
+            onChange={handleChange}
+            required
+            rows="4"
+            style={{ ...inputStyle, resize: 'none' }} // Making the textarea style consistent with the input style
+          />
+        </div>
+        <button 
+          type="submit" 
+          style={buttonStyle} 
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = buttonHoverStyle.backgroundColor} 
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = buttonStyle.backgroundColor}
+        >
           Add Set
         </button>
       </form>
-      {responseMessage && <p style={{ color: '#007bff' }}>{responseMessage}</p>}
+      {responseMessage && <p style={{ color: '#007bff', marginTop: '20px' }}>{responseMessage}</p>}
     </div>
   );
 };

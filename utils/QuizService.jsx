@@ -1,33 +1,34 @@
-import axios from "axios"
+import axios from "axios";
 
 export const api = axios.create({
-	baseURL: "http://localhost:8080/api/quizzes"
-})
+    baseURL: "http://localhost:8080/api/quizzes" // Ensure this is the correct base URL for quiz APIs
+});
 
 export const api1 = axios.create({
-  baseURL : "http://localhost:8080/codingQuestions"
-})
+    baseURL: "http://localhost:8080/codingQuestions" // Ensure this is the correct base URL for coding questions
+});
 
-export const createQuestion = async(quizQustion) =>{
-  try {
-    const response = await api.post("/create-new-question", quizQustion)
-    return response.data
-  } catch (error) {
-    console.error(error)
-  }
-}
+export const createQuestion = async (quizQuestion) => {
+    try {
+        const response = await api.post("/create-new-question", quizQuestion);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+    }
+};
 
-export const getAllQuestions = async() =>{
-  try {
-    const response = await api.get("/all-questions")
-    return response.data
-  } catch (error) {
-    console.error(error)
-    return []
-  }
-}
-
-
+// Fetch all questions based on questionSetId
+export const getAllQuestions = async (questionSetId) => {
+    try {
+        const response = await api1.get("/questionsBySetId", {
+            params: { questionSetId } // Pass the questionSetId as a query parameter
+        });
+        return response.data; // Return the fetched data
+    } catch (error) {
+        console.error("Error fetching questions:", error);
+        return []; // Return an empty array in case of error
+    }
+};
 
 
 // export const getQuestionsBySetId = async (questionSetId) => {

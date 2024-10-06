@@ -33,14 +33,14 @@ const Admin = () => {
                 <Link to={"/create-quiz"} className="nav-link">
                     Create a New Quiz
                 </Link>
-                <Link to={"/all-quizzes"} className="nav-link">
-                    Manage Existing Quizzes
+                <Link to={"/card"} className="nav-link">
+                    Manage Existing Sets
                 </Link>
                 <Link to={"/cc"} className="nav-link">
                     Code Compiler
                 </Link>
-                <Link to={"/join"} className="nav-link">
-                    Join Challenge
+                <Link to={"/addset"} className="nav-link">
+                    Add a new question set
                 </Link>
             </nav>
             {/* Logout Button */}
