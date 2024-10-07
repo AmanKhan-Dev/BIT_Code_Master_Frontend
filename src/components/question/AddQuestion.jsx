@@ -19,8 +19,9 @@ const AddQuestion = () => {
   const [userInput, setUserInput] = useState('');
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
-  const [questionNumber, setQuestionNumber] = useState(""); // New state for question number
-  
+  const [questionNumber, setQuestionNumber] = useState("");
+  const [categoryMessage, setCategoryMessage] = useState(""); // State to hold category messages
+
   const location = useLocation(); 
   const queryParams = new URLSearchParams(location.search);
   const questionSetId = queryParams.get("setId"); 
@@ -57,27 +58,25 @@ const AddQuestion = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Create the QuestionKey object
       const questionId = {
         questionSetId: questionSetId,
         questionNo: parseInt(questionNumber), // Ensure it's an integer
       };
-  
-      // Prepare the data to be sent to the backend
+      
       const questionAdder = {
         id: questionId,
         question: question,
         question_description: questionDescription,
         test_case_input: sampleInput,
         test_case_output: sampleOutput,
-        question_category: questionCategory,
+        question_category: questionCategory === "New" ? newCategory : questionCategory, // Use new category if selected
       };
-  
+
       console.log("Data to be submitted:", questionAdder);
-  
+
       // Send POST request to add the question
       await axios.post("http://localhost:8080/codingQuestions/add", questionAdder);
-  
+      
       // Reset fields after submission
       setQuestionText("");
       setQuestionDescription("");
@@ -86,12 +85,43 @@ const AddQuestion = () => {
       setSampleOutput("");
       setTestCases([{ input: "", output: "" }]);
       setQuestionNumber(""); // Reset question number
+      setNewCategory(""); // Reset new category input
       alert('Question Added Successfully');
     } catch (error) {
       console.error("Error saving the question:", error);
     }
   };
-  
+
+  const handleAddCategory = async () => {
+    if (!newCategory.trim()) {
+        setCategoryMessage("Category name cannot be empty.");
+        return;
+    }
+    try {
+        // Prepare the category object in the specified format
+        const categoryData = {
+            id: {
+                question_set_id: questionSetId, // Using the set ID from the query params
+                available_category: newCategory // The new category name
+            }
+        };
+
+        const response = await axios.post("http://localhost:8080/api/categories/add", categoryData);
+
+        // Add new category to the local state to update UI
+        setCategoryOptions([...categoryOptions, newCategory]);
+        setNewCategory(""); // Reset the input field
+        setCategoryMessage("Category added successfully!");
+
+        // Optional: Automatically select the new category
+        setQuestionCategory(newCategory);
+    } catch (error) {
+        console.error("Error adding category:", error);
+        setCategoryMessage("Error adding category. Please try again.");
+    }
+};
+
+
   const handleRunCode = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -183,6 +213,10 @@ const AddQuestion = () => {
                 onChange={(e) => setNewCategory(e.target.value)}
                 className="form-control"
               />
+              <button type="button" className="btn btn-outline-secondary mt-2" onClick={handleAddCategory}>
+                Add Category
+              </button>
+              {categoryMessage && <div className="text-success mt-1">{categoryMessage}</div>}
             </div>
           )}
 
@@ -208,55 +242,56 @@ const AddQuestion = () => {
 
           <div className="mb-3">
             <label className="form-label">Sample Input</label>
-            <textarea
-              className="form-control"
-              rows="2"
+            <input
+              type="text"
               value={sampleInput}
               onChange={(e) => setSampleInput(e.target.value)}
-            ></textarea>
+              className="form-control"
+              placeholder="Enter sample input"
+            />
           </div>
 
           <div className="mb-3">
             <label className="form-label">Sample Output</label>
-            <textarea
-              className="form-control"
-              rows="2"
+            <input
+              type="text"
               value={sampleOutput}
               onChange={(e) => setSampleOutput(e.target.value)}
-            ></textarea>
+              className="form-control"
+              placeholder="Enter sample output"
+            />
           </div>
 
-          <div className="test-cases-section">
-            <label className="form-label">Test Cases</label>
-            {testCases.map((testCase, index) => (
-              <div key={index} className="mb-2">
+          {testCases.map((testCase, index) => (
+            <div key={index} className="test-case mb-3">
+              <div>
+                <label className="form-label">Test Case Input {index + 1}</label>
                 <input
                   type="text"
-                  placeholder="Test Case Input"
                   value={testCase.input}
                   onChange={(e) => handleTestCaseChange(index, "input", e.target.value)}
-                  className="form-control mb-2"
+                  className="form-control"
+                  placeholder="Test case input"
                 />
+                <label className="form-label">Test Case Output {index + 1}</label>
                 <input
                   type="text"
-                  placeholder="Test Case Output"
                   value={testCase.output}
                   onChange={(e) => handleTestCaseChange(index, "output", e.target.value)}
                   className="form-control"
+                  placeholder="Test case output"
                 />
-                <button type="button" className="btn btn-danger mt-1" onClick={() => handleRemoveTestCase(index)}>
-                  Remove Test Case
-                </button>
               </div>
-            ))}
-            <button type="button" className="btn btn-secondary" onClick={handleAddTestCase}>
-              Add Test Case
-            </button>
-          </div>
-
-          <button type="submit" className="btn btn-outline-success mt-2">
-            Save Question
+              <button type="button" onClick={() => handleRemoveTestCase(index)} className="btn btn-danger mt-2">
+                Remove Test Case
+              </button>
+            </div>
+          ))}
+          <button type="button" onClick={handleAddTestCase} className="btn btn-outline-secondary mb-3">
+            Add Test Case
           </button>
+
+          <button type="submit" className="btn btn-primary">Add Question</button>
         </form>
       </div>
     </div>
