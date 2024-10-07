@@ -262,7 +262,7 @@ const addTestCases = async (questionId) => {
 
           <div className="mb-3">
             <label className="form-label">Sample Input</label>
-            <input
+            <textarea
               type="text"
               value={sampleInput}
               onChange={(e) => setSampleInput(e.target.value)}
@@ -273,7 +273,7 @@ const addTestCases = async (questionId) => {
 
           <div className="mb-3">
             <label className="form-label">Sample Output</label>
-            <input
+            <textarea
               type="text"
               value={sampleOutput}
               onChange={(e) => setSampleOutput(e.target.value)}
@@ -286,7 +286,7 @@ const addTestCases = async (questionId) => {
             <div key={index} className="test-case mb-3">
               <div>
                 <label className="form-label">Test Case Input {index + 1}</label>
-                <input
+                <textarea
                   type="text"
                   value={testCase.input}
                   onChange={(e) => handleTestCaseChange(index, "input", e.target.value)}
@@ -294,7 +294,7 @@ const addTestCases = async (questionId) => {
                   placeholder="Test case input"
                 />
                 <label className="form-label">Test Case Output {index + 1}</label>
-                <input
+                <textarea
                   type="text"
                   value={testCase.output}
                   onChange={(e) => handleTestCaseChange(index, "output", e.target.value)}
@@ -311,7 +311,7 @@ const addTestCases = async (questionId) => {
             Add Test Case
           </button>
 
-          <button type="submit" className="btn btn-primary">Add Question</button>
+          <button  type="submit" className="btn btn-primary">Add Question</button>
         </form>
       </div>
     </div>
