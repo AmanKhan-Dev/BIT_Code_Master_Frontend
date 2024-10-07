@@ -27,10 +27,10 @@ const AddQuestion = () => {
 
   useEffect(() => {
     fetchCategories();
-  }, [questionSetId]); // Depend on questionSetId to fetch categories when it changes
+  }, [questionSetId]);
 
   const fetchCategories = async () => {
-    if (!questionSetId) return; // Ensure questionSetId is available
+    if (!questionSetId) return; 
     try {
       const response = await axios.get(`http://localhost:8080/api/categories/set/${questionSetId}`);
       setCategoryOptions(response.data); 
@@ -57,20 +57,27 @@ const AddQuestion = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const result = {
-        question,
-        questionDescription,
-        questionCategory,
-        sampleInput,
-        sampleOutput,
-        testCases,
-        questionNumber // Include question number in the submission
+      // Create the QuestionKey object
+      const questionId = {
+        questionSetId: questionSetId,
+        questionNo: parseInt(questionNumber), // Ensure it's an integer
       };
-
-      console.log("Data to be submitted:", result);
-
-      await createQuestion(result); // Implement this function based on your API
-
+  
+      // Prepare the data to be sent to the backend
+      const questionAdder = {
+        id: questionId,
+        question: question,
+        question_description: questionDescription,
+        test_case_input: sampleInput,
+        test_case_output: sampleOutput,
+        question_category: questionCategory,
+      };
+  
+      console.log("Data to be submitted:", questionAdder);
+  
+      // Send POST request to add the question
+      await axios.post("http://localhost:8080/codingQuestions/add", questionAdder);
+  
       // Reset fields after submission
       setQuestionText("");
       setQuestionDescription("");
@@ -79,11 +86,12 @@ const AddQuestion = () => {
       setSampleOutput("");
       setTestCases([{ input: "", output: "" }]);
       setQuestionNumber(""); // Reset question number
+      alert('Question Added Successfully');
     } catch (error) {
       console.error("Error saving the question:", error);
     }
   };
-
+  
   const handleRunCode = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -234,24 +242,14 @@ const AddQuestion = () => {
                   placeholder="Test Case Output"
                   value={testCase.output}
                   onChange={(e) => handleTestCaseChange(index, "output", e.target.value)}
-                  className="form-control mb-2"
+                  className="form-control"
                 />
-                {index > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTestCase(index)}
-                    className="btn btn-outline-danger mb-2"
-                  >
-                    Remove Test Case
-                  </button>
-                )}
+                <button type="button" className="btn btn-danger mt-1" onClick={() => handleRemoveTestCase(index)}>
+                  Remove Test Case
+                </button>
               </div>
             ))}
-            <button
-              type="button"
-              onClick={handleAddTestCase}
-              className="btn btn-outline-info"
-            >
+            <button type="button" className="btn btn-secondary" onClick={handleAddTestCase}>
               Add Test Case
             </button>
           </div>
