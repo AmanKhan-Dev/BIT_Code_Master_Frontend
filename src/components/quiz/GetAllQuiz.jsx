@@ -15,11 +15,11 @@ const GetAllQuiz = () => {
 
     useEffect(() => {
         fetchQuestions();
-    }, [questionSetId]); 
+    }, [questionSetId]); // Refetch questions when questionSetId changes
 
     const fetchQuestions = async () => {
         try {
-            const response = await getAllQuestions(questionSetId); 
+            const response = await getAllQuestions(questionSetId); // Pass questionSetId to the API call
             console.log("Fetched Questions: ", response); // Log the fetched questions
             setQuestions(response); 
             setIsLoading(false);
@@ -57,9 +57,8 @@ const GetAllQuiz = () => {
                 <div className="col-md-4 d-flex justify-content-end">
                     {/* Add Question Link */}
                     <Link to={`/create-quiz?setId=${questionSetId}`}>
-    <FaPlus /> Add Question
-</Link>
-
+                        <FaPlus /> Add Question
+                    </Link>
                 </div>
             </div>
             <hr />
@@ -74,9 +73,11 @@ const GetAllQuiz = () => {
                         </pre>
                         <p className="text-success">Category: {question.questionCategory}</p>
                         <div className="btn-group mb-4">
-                            <Link to={`/update-quiz/${question.questionNo}`}>
+                            {/* Update Question Link - Add setId */}
+                            <Link to={`/update-quiz/${question.questionNo}?setId=${questionSetId}`}>
                                 <button className="btn btn-sm btn-outline-warning mr-2">Edit Question</button>
                             </Link>
+                            {/* Delete Question Button */}
                             <button
                                 className="btn btn-sm btn-outline-danger"
                                 onClick={() => handleDeleteQuestion(question.questionNo)}
