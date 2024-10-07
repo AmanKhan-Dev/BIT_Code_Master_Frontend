@@ -58,39 +58,59 @@ const AddQuestion = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const questionId = {
-        questionSetId: questionSetId,
-        questionNo: parseInt(questionNumber), // Ensure it's an integer
-      };
-      
-      const questionAdder = {
-        id: questionId,
-        question: question,
-        question_description: questionDescription,
-        test_case_input: sampleInput,
-        test_case_output: sampleOutput,
-        question_category: questionCategory === "New" ? newCategory : questionCategory, // Use new category if selected
-      };
+        const questionId = {
+            questionSetId: questionSetId,
+            questionNo: parseInt(questionNumber), // Ensure it's an integer
+        };
+        
+        const questionAdder = {
+            id: questionId,
+            question: question,
+            question_description: questionDescription,
+            question_category: questionCategory === "New" ? newCategory : questionCategory, // Use new category if selected
+        };
 
-      console.log("Data to be submitted:", questionAdder);
+        console.log("Data to be submitted:", questionAdder);
 
-      // Send POST request to add the question
-      await axios.post("http://localhost:8080/codingQuestions/add", questionAdder);
-      
-      // Reset fields after submission
-      setQuestionText("");
-      setQuestionDescription("");
-      setQuestionCategory("");
-      setSampleInput("");
-      setSampleOutput("");
-      setTestCases([{ input: "", output: "" }]);
-      setQuestionNumber(""); // Reset question number
-      setNewCategory(""); // Reset new category input
-      alert('Question Added Successfully');
+        // Send POST request to add the question
+        await axios.post("http://localhost:8080/codingQuestions/add", questionAdder);
+        
+        // After the question is added, send the test cases
+        await addTestCases(questionId); // Call the function to add test cases
+
+        // Reset fields after submission
+        setQuestionText("");
+        setQuestionDescription("");
+        setQuestionCategory("");
+        setSampleInput("");
+        setSampleOutput("");
+        setTestCases([{ input: "", output: "" }]);
+        setQuestionNumber(""); // Reset question number
+        setNewCategory(""); // Reset new category input
+        alert('Question and Test Cases Added Successfully');
     } catch (error) {
-      console.error("Error saving the question:", error);
+        console.error("Error saving the question:", error);
     }
-  };
+};
+
+// Function to add test cases
+const addTestCases = async (questionId) => {
+    const testCasesToAdd = testCases.map(testCase => ({
+        questionSetId: questionId.questionSetId,
+        questionNo: questionId.questionNo,
+        testCaseInput: testCase.input,
+        testCaseOutput: testCase.output,
+    }));
+
+    try {
+        // Send POST request to add test cases
+        await axios.post("http://localhost:8080/api/testcases/add", testCasesToAdd);
+        console.log("Test cases added successfully:", testCasesToAdd);
+    } catch (error) {
+        console.error("Error adding test cases:", error);
+        alert("Error adding test cases. Please check the console for more details.");
+    }
+};
 
   const handleAddCategory = async () => {
     if (!newCategory.trim()) {
