@@ -3,7 +3,7 @@ import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-c_cpp';
 import 'ace-builds/src-noconflict/theme-github';
 import axios from "axios";
-
+import { useLocation } from "react-router-dom"; 
 
 const AddQuestion = () => {
   const [question, setQuestionText] = useState("");
@@ -14,24 +14,28 @@ const AddQuestion = () => {
   const [testCases, setTestCases] = useState([{ input: "", output: "" }]);
   const [sampleInput, setSampleInput] = useState("");
   const [sampleOutput, setSampleOutput] = useState("");
-
   const [sourceCode, setSourceCode] = useState('');
   const [language, setLanguage] = useState('c_cpp');
   const [userInput, setUserInput] = useState('');
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState('');
+  const [questionNumber, setQuestionNumber] = useState(""); // New state for question number
+  
+  const location = useLocation(); 
+  const queryParams = new URLSearchParams(location.search);
+  const questionSetId = queryParams.get("setId"); 
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [questionSetId]); // Depend on questionSetId to fetch categories when it changes
 
   const fetchCategories = async () => {
+    if (!questionSetId) return; // Ensure questionSetId is available
     try {
-      const categoriesData = await getCategories(); // Call your backend to get categories
-      setCategoryOptions(categoriesData);
+      const response = await axios.get(`http://localhost:8080/api/categories/set/${questionSetId}`);
+      setCategoryOptions(response.data); 
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching categories:", error);
     }
   };
 
@@ -59,56 +63,51 @@ const AddQuestion = () => {
         questionCategory,
         sampleInput,
         sampleOutput,
-        testCases
+        testCases,
+        questionNumber // Include question number in the submission
       };
 
       console.log("Data to be submitted:", result);
 
-      await createQuestion(result);
+      await createQuestion(result); // Implement this function based on your API
 
+      // Reset fields after submission
       setQuestionText("");
       setQuestionDescription("");
       setQuestionCategory("");
       setSampleInput("");
       setSampleOutput("");
       setTestCases([{ input: "", output: "" }]);
+      setQuestionNumber(""); // Reset question number
     } catch (error) {
       console.error("Error saving the question:", error);
     }
   };
 
- 
   const handleRunCode = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setResponse(""); // Clear previous response
-
     try {
-        const response = await axios.post('http://localhost:8080/api/compiler/compile', {
-            sourceCode,
-            language: language === 'c_cpp' ? 'C++' : 'C',
-            userInput,
-        });
+      const response = await axios.post('http://localhost:8080/api/compiler/compile', {
+        sourceCode,
+        language: language === 'c_cpp' ? 'C++' : 'C',
+        userInput,
+      });
 
-        const resultData = response.data;
-        setResult(resultData); // Set the raw response directly
+      setResult(response.data); 
     } catch (error) {
-        // Log the error for debugging purposes
-        console.error("Error running code:", error);
-
-        // Get the raw response from the error
-        const errorMessage = error.response
-            ? error.response.data
-            : error.message || 'An unexpected error occurred';
-
-        setResult(errorMessage); // Display the raw error message directly
+      console.error("Error running code:", error);
+      const errorMessage = error.response ? error.response.data : error.message || 'An unexpected error occurred';
+      setResult(errorMessage);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
   return (
     <div className="add-question-container">
+      <h4>Question Set ID: {questionSetId}</h4> 
+
       <div className="code-editor-section">
         <h5>Code Editor</h5>
         <AceEditor
@@ -120,7 +119,6 @@ const AddQuestion = () => {
           width="100%"
           height="400px"
           editorProps={{ $blockScrolling: true }}
-          style={{ borderRadius: '4px', border: '1px solid #ddd' }}
         />
         <textarea
           value={userInput}
@@ -129,10 +127,7 @@ const AddQuestion = () => {
           rows="4"
           className="user-input"
         />
-        <button
-          onClick={handleRunCode}
-          className="btn btn-outline-primary mt-2"
-        >
+        <button onClick={handleRunCode} className="btn btn-outline-primary mt-2">
           Run Code
         </button>
         {loading && <div className="loading">Running...</div>}
@@ -141,6 +136,18 @@ const AddQuestion = () => {
 
       <div className="form-section">
         <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label htmlFor="questionNumber" className="form-label">Question Number</label>
+            <input
+              type="text"
+              id="questionNumber"
+              value={questionNumber}
+              onChange={(e) => setQuestionNumber(e.target.value)}
+              className="form-control"
+              placeholder="Enter Question Number"
+            />
+          </div>
+
           <div className="mb-3">
             <label htmlFor="category" className="form-label">Select a Category</label>
             <select
@@ -151,8 +158,8 @@ const AddQuestion = () => {
             >
               <option value="">Select category</option>
               <option value="New">Add New</option>
-              {categoryOptions.map((option) => (
-                <option key={option} value={option}>
+              {categoryOptions.map((option, index) => (
+                <option key={index} value={option}>
                   {option}
                 </option>
               ))}
@@ -258,4 +265,4 @@ const AddQuestion = () => {
   );
 };
 
-export default AddQuestion
+export default AddQuestion;

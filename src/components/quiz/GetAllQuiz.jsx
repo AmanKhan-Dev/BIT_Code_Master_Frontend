@@ -11,7 +11,7 @@ const GetAllQuiz = () => {
 
     const location = useLocation(); 
     const queryParams = new URLSearchParams(location.search);
-    const questionSetId = queryParams.get("setId"); 
+    const questionSetId = queryParams.get("setId"); // Extract questionSetId from URL query params
 
     useEffect(() => {
         fetchQuestions();
@@ -52,11 +52,14 @@ const GetAllQuiz = () => {
             <div className="row mt-5">
                 <div className="col-md-6 mb-2 md-mb-0" style={{ color: "GrayText" }}>
                     <h4>All Quiz Questions</h4>
+                    <p><strong>Question Set ID: {questionSetId}</strong></p> {/* Display questionSetId at the top */}
                 </div>
                 <div className="col-md-4 d-flex justify-content-end">
-                    <Link to={"/create-quiz"}>
-                        <FaPlus /> Add Question
-                    </Link>
+                    {/* Add Question Link */}
+                    <Link to={`/create-quiz?setId=${questionSetId}`}>
+    <FaPlus /> Add Question
+</Link>
+
                 </div>
             </div>
             <hr />
