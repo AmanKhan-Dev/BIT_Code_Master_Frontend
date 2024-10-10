@@ -13,7 +13,7 @@ import {
 } from 'mdb-react-ui-kit';
 import { saveStudent } from "../../../utils/StudentService";
 import FadeTransition from './FadeTransition'; // Import the FadeTransition component
-import './fadeTransition.css'; // Import the CSS file
+import './fadetransition.css'; // Import the CSS file
 import { useNavigate } from "react-router-dom"; 
 
 function Register() {

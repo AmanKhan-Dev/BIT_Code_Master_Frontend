@@ -30,15 +30,11 @@ const Admin = () => {
                 <Link to={"/adminLogin"} className="nav-link">
                     Admin Login
                 </Link>
-                <Link to={"/create-quiz"} className="nav-link">
-                    Create a New Quiz
-                </Link>
+            
                 <Link to={"/card"} className="nav-link">
                     Manage Existing Sets
                 </Link>
-                <Link to={"/cc"} className="nav-link">
-                    Code Compiler
-                </Link>
+                
                 <Link to={"/addset"} className="nav-link">
                     Add a new question set
                 </Link>

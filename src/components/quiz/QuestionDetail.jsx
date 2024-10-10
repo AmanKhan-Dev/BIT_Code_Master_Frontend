@@ -70,21 +70,23 @@ const QuestionDetail = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:8080/api/compiler/compile', {
-        sourceCode,
-        language: language === 'c_cpp' ? 'C++' : 'C',
-        userInput
-      });
-      const resultData = response.data;
-      setResult(resultData);
-      const testCasesPassed = checkTestCases(resultData);
-      alert(testCasesPassed ? 'All test cases passed' : 'Some test cases did not pass');
+        const response = await axios.post('http://localhost:8080/api/compiler/compile', {
+            sourceCode,
+            language: language === 'c_cpp' ? 'C++' : 'C',
+            userInput,
+        });
+        const resultData = response.data;
+        setResult(resultData);
+        const testCasesPassed = checkTestCases(resultData);
+        alert(testCasesPassed ? 'All test cases passed' : 'Some test cases did not pass');
     } catch (error) {
-      setResponse(`Error: ${error.response ? error.response.data : error.message}`);
+        console.error("Error response:", error); // Log the full error
+        const errorMessage = error.response?.data || error.message || "An unknown error occurred.";
+        setResponse(`Error: ${errorMessage}`);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
   const handleVerifySubmit = async (e) => {
     e.preventDefault();
@@ -104,7 +106,7 @@ const QuestionDetail = () => {
         language,
         questionSetId,
         questionNo,
-      });
+    });
 
       setResponse(verifyResponse.data);
       const testCasesPassed = checkTestCases(resultData);
@@ -118,11 +120,12 @@ const QuestionDetail = () => {
         alert("Sample Input Or Output Mismatched");
       }
     } catch (error) {
-      setResponse(`Error: ${error.response ? error.response.data : error.message}`);
-    } finally {
+      const errorMessage = error.response?.data || error.message || "An unknown error occurred.";
+      setResponse(`Error: ${errorMessage}`);
+  } finally {
       setLoading(false);
-    }
-  };
+  }
+};
 
   const handleSaveCode = async () => {
     try {

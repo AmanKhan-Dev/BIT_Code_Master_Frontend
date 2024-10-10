@@ -201,7 +201,7 @@ function Home() {
           variety of Questions and their Category keeps me engaged, and I love
           competing with my friends!"
         </blockquote>
-        <p style={{ fontWeight: "bold" }}>- Aman Khan</p>
+        <p style={{ fontWeight: "bold" }}>- BIT Students</p>
       </section>
 
       {/* Footer */}
@@ -261,7 +261,7 @@ function Home() {
         </Offcanvas.Header>
         <Offcanvas.Body>
           <p>
-            Please select your role to proceed with and sign-up as Student or
+            Please select your role to proceed with and sign-in as Student or
             Admin.
           </p>
           <div
@@ -274,16 +274,16 @@ function Home() {
           >
             <CustomButton
               primary
-              onClick={() => (window.location.href = "/Register")}
+              onClick={() => (window.location.href = "/Login-Page")}
             >
-              User Sign Up
+              Student Sign In
             </CustomButton>
 
             <CustomButton
               primary
-              onClick={() => (window.location.href = "/Register")}
+              onClick={() => (window.location.href = "/adminLogin")}
             >
-              Admin Sign Up
+              Admin Sign In
             </CustomButton>
           </div>
         </Offcanvas.Body>
