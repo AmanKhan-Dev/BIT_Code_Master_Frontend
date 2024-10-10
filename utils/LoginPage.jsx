@@ -31,8 +31,6 @@ const Login = () => {
     }
   };
 
-  
-
   return (
     <StyledWrapper>
       <div className="container">
@@ -58,8 +56,9 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          {/* Forgot Password Link */}
           <span className="forgot-password">
-            <a href="#"></a>
+            <a href="/forgot" className="forgot-link">Forgot Password?</a>
           </span>
           <input value="Sign In" type="submit" className="login-button" />
         </form>
@@ -72,7 +71,6 @@ const Login = () => {
     </StyledWrapper>
   );
 };
-
 // Styled components remain the same...
 
 const StyledWrapper = styled.div`
