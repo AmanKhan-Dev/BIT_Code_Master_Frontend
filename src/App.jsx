@@ -25,6 +25,7 @@ import JoinChallenge from "./components/quiz/JoinTest";
 import Dashboard from "../utils/UserDashboard";
 import JdoodleEmbed from "./components/question/JdoodleEnbad";
 import Card from "./components/quiz/Card";
+import OTP from "./components/quiz/Otp";
 
 
 const App = () => {
@@ -59,6 +60,8 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/jj" element={<JdoodleEmbed/>} />
         <Route path="/card" element={<Card/>} />
+        <Route path="/otp" element={<OTP/>} />
+
    
       </Routes>
     </main>
