@@ -48,7 +48,7 @@ const OTP = () => {
 
       if (response.ok) {
         // Redirect to the login page or handle success
-        window.location.href = "/login"; // Adjust the path as necessary
+        window.location.href = "/Login-Page"; // Adjust the path as necessary
       } else {
         // Handle invalid OTP
         console.error("Invalid OTP");
