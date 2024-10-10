@@ -1,19 +1,30 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
+import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordUpdated, setPasswordUpdated] = useState(false);
-  const [error, setError] = useState(""); // State for error messages
+  const [error, setError] = useState("");
+  const [otpMessage, setOtpMessage] = useState("");
+  const [passwordError, setPasswordError] = useState(""); // State for password error messages
+
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
 
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
     try {
       const response = await fetch("http://localhost:8080/api/otp/send", {
         method: "POST",
@@ -25,21 +36,24 @@ const ForgotPassword = () => {
 
       if (response.ok) {
         setOtpSent(true);
-        setError(""); // Clear any previous error
+        setError("");
+        setOtpMessage(`OTP has been sent to ${email}`);
       } else {
         const errorData = await response.json();
         setError(errorData.message || "Failed to send OTP");
+        setOtpMessage("");
       }
     } catch (error) {
       console.error("Error sending OTP:", error);
       setError("Error sending OTP. Please try again.");
+      setOtpMessage("");
     }
   };
 
   const handleOtpInput = (e, nextInputId) => {
     if (e.target.value.length === 1) {
-      setOtp((prev) => prev + e.target.value); // Update OTP state
-      document.getElementById(nextInputId)?.focus(); // Focus on the next input
+      setOtp((prev) => prev + e.target.value);
+      document.getElementById(nextInputId)?.focus();
     }
   };
 
@@ -55,9 +69,10 @@ const ForgotPassword = () => {
       });
 
       if (response.ok) {
-        setOtpSent(false); // Reset OTP sent status
-        setPasswordUpdated(true); // Trigger password update form
-        setError(""); // Clear any previous error
+        setOtpSent(false);
+        setPasswordUpdated(true);
+        setError("");
+        setOtpMessage("");
       } else {
         const errorData = await response.json();
         setError(errorData.message || "Invalid OTP");
@@ -70,9 +85,15 @@ const ForgotPassword = () => {
 
   const handlePasswordUpdate = async (e) => {
     e.preventDefault();
-    // Check if the new password and confirmation password match
+    setPasswordError(""); // Reset password error message
+
     if (newPassword !== confirmPassword) {
-      setError("Passwords do not match!"); // Alert user if passwords don't match
+      setError("Passwords do not match!");
+      return;
+    }
+    
+    if (newPassword.length < 8) {
+      setPasswordError("Password must be at least 8 characters long."); // Set password error message
       return;
     }
 
@@ -82,12 +103,11 @@ const ForgotPassword = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, otp, newPassword }), // Send email, OTP, and new password to update
+        body: JSON.stringify({ email, otp, newPassword }),
       });
 
       if (response.ok) {
         alert("Password updated successfully!");
-        // Redirect to the login page after successful password update
         navigate("/Login-Page");
       } else {
         const errorData = await response.json();
@@ -101,12 +121,13 @@ const ForgotPassword = () => {
 
   return (
     <StyledWrapper>
-      {!passwordUpdated ? ( // Only show OTP/email form if password has not been updated
+      {!passwordUpdated ? (
         <form className="form" onSubmit={otpSent ? handleOtpSubmit : handleEmailSubmit}>
           <div className="title">Forgot Password</div>
-          {error && <div className="error">{error}</div>} {/* Display error messages */}
+          {error && <div className="error">{error}</div>}
+          {otpMessage && <div className="otp-message">{otpMessage}</div>}
           
-          {!otpSent ? ( // Show email input only if OTP hasn't been sent
+          {!otpSent ? (
             <>
               <div className="title">Enter Your Email</div>
               <input
@@ -119,7 +140,7 @@ const ForgotPassword = () => {
             </>
           ) : null}
 
-          {otpSent ? ( // Show OTP input if OTP has been sent
+          {otpSent ? (
             <>
               <div className="title">Enter Verification Code</div>
               <div className="inputs">
@@ -140,7 +161,7 @@ const ForgotPassword = () => {
             {otpSent ? "Verify Me" : "Send OTP"}
           </button>
         </form>
-      ) : ( // Show password update form when passwordUpdated is true
+      ) : (
         <form className="form" onSubmit={handlePasswordUpdate}>
           <div className="title">Update Your Password</div>
           <input
@@ -157,6 +178,7 @@ const ForgotPassword = () => {
             placeholder="Confirm New Password"
             required
           />
+          {passwordError && <div className="error">{passwordError}</div>} {/* Display password error message */}
           <button type="submit" className="action">
             Update Password
           </button>
@@ -204,6 +226,7 @@ const StyledWrapper = styled.div`
     border: none;
     border-bottom: 1.5px solid #d2d2d2;
     margin: 0 5px;
+    transition: border-color 0.2s;
   }
 
   .inputs input:focus {
@@ -219,11 +242,21 @@ const StyledWrapper = styled.div`
     background-color: royalblue;
     color: white;
     cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .action:hover {
+    background-color: darkblue;
   }
 
   .error {
     color: red;
-    margin-bottom: 10px; // Margin for spacing
+    margin-bottom: 10px; 
+  }
+
+  .otp-message {
+    color: green;
+    margin-bottom: 10px; 
   }
 `;
 
