@@ -130,7 +130,7 @@ function Home() {
             </IconWrapper>
             <h3 style={{ color: "#2563eb" }}>Diverse Topics</h3>
             <p>
-              From history to pop culture, we've got quizzes on every subject
+              From Basic Operations to Data Structures, we've got questions on every category
               imaginable.
             </p>
           </Card>
@@ -140,7 +140,7 @@ function Home() {
             </IconWrapper>
             <h3 style={{ color: "#2563eb" }}>Competitive Leaderboards</h3>
             <p>
-              Compete with friends and coding enthusiasts from around the world.
+              Compete with friends and coding enthusiasts from around the campus.
             </p>
           </Card>
           <Card>
@@ -201,7 +201,7 @@ function Home() {
           variety of Questions and their Category keeps me engaged, and I love
           competing with my friends!"
         </blockquote>
-        <p style={{ fontWeight: "bold" }}>- BIT Students</p>
+        <p style={{ fontWeight: "bold" }}>- BIT Students From III/IV Year </p>
       </section>
 
       {/* Footer */}
