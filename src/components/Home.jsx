@@ -106,7 +106,7 @@ function Home() {
         </h2>
         <div className="rounded mx-auto d-block">
           <img
-            src="https://static.vecteezy.com/system/resources/previews/004/753/002/original/custom-coding-icon-shadowed-detailed-custom-coding-logo-free-vector.jpg"
+            src="/public/bit-code-master2.jpg"
             alt="Bit Code Master"
             style={{
               display: "block",
