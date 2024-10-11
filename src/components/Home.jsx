@@ -106,7 +106,7 @@ function Home() {
         </h2>
         <div className="rounded mx-auto d-block">
           <img
-            src="/public/bit-code-master2.jpg"
+            src="/assets/bit-code-master2.jpg"
             alt="Bit Code Master"
             style={{
               display: "block",
