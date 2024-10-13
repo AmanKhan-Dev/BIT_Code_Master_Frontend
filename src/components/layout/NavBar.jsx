@@ -25,6 +25,9 @@ const Navbar = () => {
           <Link to="/Login-Page" className="login">Login</Link>
         </li>
         <li>
+          <Link to="/adminLogin" className="login"> Faculty Login</Link>
+        </li>
+        <li>
           <Link to="/Register" className="signup">Sign Up</Link>
         </li>
       </ul>
