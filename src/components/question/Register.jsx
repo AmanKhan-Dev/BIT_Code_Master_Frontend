@@ -189,7 +189,7 @@ function Register() {
               </MDBCol>
 
               <MDBCol md='10' lg='6' className='order-1 order-lg-2 d-flex align-items-center'>
-                <MDBCardImage src='public\Exam-PNG-Pic.png' fluid />
+                <MDBCardImage src='assets\Exam-PNG-Pic.png' fluid />
               </MDBCol>
             </MDBRow>
           </MDBCardBody>
