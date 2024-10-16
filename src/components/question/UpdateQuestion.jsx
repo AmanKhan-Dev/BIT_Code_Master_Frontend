@@ -76,7 +76,7 @@ const UpdateQuestion = () => {
 				}
 			};
 
-			const response = await axios.post("https://measuring-advanced-yoga-cooking.trycloudflare.com:8080/api/categories/add", categoryData);
+			const response = await axios.post("https://measuring-advanced-yoga-cooking.trycloudflare.com/api/categories/add", categoryData);
 
 			setCategoryOptions([...categoryOptions, newCategory]);
 			setNewCategory("");
@@ -122,7 +122,7 @@ const UpdateQuestion = () => {
 		}));
 
 		try {
-			await axios.post("https://measuring-advanced-yoga-cooking.trycloudflare.com:8080/api/testcases/add", testCasesToAdd);
+			await axios.post("https://measuring-advanced-yoga-cooking.trycloudflare.com/api/testcases/add", testCasesToAdd);
 		} catch (error) {
 			console.error("Error updating test cases:", error);
 		}
@@ -132,7 +132,7 @@ const UpdateQuestion = () => {
 		e.preventDefault();
 		setLoading(true);
 		try {
-			const response = await axios.post('https://measuring-advanced-yoga-cooking.trycloudflare.com:8080/api/compiler/compile', {
+			const response = await axios.post('https://measuring-advanced-yoga-cooking.trycloudflare.com/api/compiler/compile', {
 				sourceCode,
 				language: language === 'c_cpp' ? 'C++' : 'C',
 				userInput,

@@ -13,7 +13,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("https://measuring-advanced-yoga-cooking.trycloudflare.com:8080/student/logins", {
+      const response = await axios.post("https://measuring-advanced-yoga-cooking.trycloudflare.com/student/logins", {
         email,
         password,
       });

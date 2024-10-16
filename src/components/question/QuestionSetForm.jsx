@@ -59,7 +59,7 @@ const QuestionSetForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://measuring-advanced-yoga-cooking.trycloudflare.com:8080/sets/addset', questionSet);
+      const response = await axios.post('https://measuring-advanced-yoga-cooking.trycloudflare.com/sets/addset', questionSet);
       setResponseMessage(response.data);
     } catch (error) {
       setResponseMessage(error.response ? error.response.data : 'An error occurred');

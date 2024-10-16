@@ -16,7 +16,7 @@ const Card = () => {
 
     // Fetch all question sets from the backend
     useEffect(() => {
-        fetch("https://measuring-advanced-yoga-cooking.trycloudflare.com:8080/sets/allsets")
+        fetch("https://measuring-advanced-yoga-cooking.trycloudflare.com/sets/allsets")
             .then((response) => response.json())
             .then((data) => setQuestionSets(data))
             .catch((error) => console.error("Error fetching question sets:", error));

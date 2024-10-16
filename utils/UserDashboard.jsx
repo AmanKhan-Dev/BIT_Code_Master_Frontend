@@ -11,7 +11,7 @@ const UserDashboard = () => {
 
   const fetchUserData = async (email) => {
     try {
-      const response = await axios.get(`https://measuring-advanced-yoga-cooking.trycloudflare.com:8080/student/findByEmail`, {
+      const response = await axios.get(`https://measuring-advanced-yoga-cooking.trycloudflare.com/student/findByEmail`, {
         params: { email }
       });
       setUserData(response.data);
