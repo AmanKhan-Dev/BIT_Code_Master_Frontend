@@ -263,7 +263,7 @@ const QuestionDetail = () => {
           height="70%" 
           editorProps={{ $blockScrolling: true }}
           style={{ borderRadius: '4px', border: '1px solid #ddd', minHeight: '500px' }}
-        //  onLoad={handleEditorLoad} disable copy paste
+         onLoad={handleEditorLoad} disable copy paste
         />
 
         <form onSubmit={handleVerifySubmit} className="code-form">
