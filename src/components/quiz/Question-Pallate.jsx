@@ -21,7 +21,7 @@ const Pallate = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get('http://34.123.112.154:8080/codingQuestions/questionsBySetId', {
+        const response = await axios.get('https://measuring-advanced-yoga-cooking.trycloudflare.com:8080/codingQuestions/questionsBySetId', {
           params: { questionSetId: questionSetId || 'BTCOCOC505' },
         });
 
@@ -48,7 +48,7 @@ const Pallate = () => {
     const solvedStatus = {};
     for (const question of questions) {
       try {
-        const response = await axios.get('http://34.123.112.154:8080/api/results/exists', {
+        const response = await axios.get('https://measuring-advanced-yoga-cooking.trycloudflare.com:8080/api/results/exists', {
           params: {
             questionSetId: questionSetId,
             questionNo: question.questionNo,

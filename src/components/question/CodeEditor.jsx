@@ -39,7 +39,7 @@ const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-        const response = await axios.post('http://34.123.112.154:8080/api/compiler/compile', {
+        const response = await axios.post('https://measuring-advanced-yoga-cooking.trycloudflare.com:8080/api/compiler/compile', {
             sourceCode,
             language: language === 'c_cpp' ? 'C++' : 'C',
             userInput
