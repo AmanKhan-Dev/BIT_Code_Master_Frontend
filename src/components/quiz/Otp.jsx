@@ -9,7 +9,7 @@ const OTP = () => {
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://measuring-advanced-yoga-cooking.trycloudflare.com/api/otp/send", {
+      const response = await fetch("http://34.123.112.154:8080/api/otp/send", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -38,7 +38,7 @@ const OTP = () => {
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://measuring-advanced-yoga-cooking.trycloudflare.com/api/otp/verify", {
+      const response = await fetch("http://34.123.112.154:8080/api/otp/verify", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

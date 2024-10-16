@@ -26,7 +26,7 @@ const QuestionDetail = () => {
   useEffect(() => {
     const fetchQuestionData = async () => {
       try {
-        const url = `https://measuring-advanced-yoga-cooking.trycloudflare.com/codingQuestions/questions/${questionSetId}/${questionNo}`;
+        const url = `http://34.123.112.154:8080/codingQuestions/questions/${questionSetId}/${questionNo}`;
         const response = await axios.get(url);
         setQuestionData(response.data);
       } catch (err) {
@@ -40,7 +40,7 @@ const QuestionDetail = () => {
   
   const fetchSavedCode = async () => {
     try {
-      const url = `https://measuring-advanced-yoga-cooking.trycloudflare.com/code/get?student_email=${email}&question_set_id=${questionSetId}&question_no=${questionNo}`;
+      const url = `http://34.123.112.154:8080/code/get?student_email=${email}&question_set_id=${questionSetId}&question_no=${questionNo}`;
       const response = await axios.get(url);
       setSourceCode(response.data); // Set the saved code in the editor
     } catch (err) {
@@ -51,7 +51,7 @@ const QuestionDetail = () => {
 
   const saveResult = async (resultData) => {
     try {
-      await axios.post('https://measuring-advanced-yoga-cooking.trycloudflare.com/api/results/saveResult', {
+      await axios.post('http://34.123.112.154:8080/api/results/saveResult', {
         questionSetId,
         questionNo,
         email,
@@ -70,7 +70,7 @@ const QuestionDetail = () => {
     e.preventDefault();
     setLoading(true);
     try {
-        const response = await axios.post('https://measuring-advanced-yoga-cooking.trycloudflare.com/api/compiler/compile', {
+        const response = await axios.post('http://34.123.112.154:8080/api/compiler/compile', {
             sourceCode,
             language: language === 'c_cpp' ? 'C++' : 'C',
             userInput,
@@ -92,7 +92,7 @@ const QuestionDetail = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const compileResponse = await axios.post('https://measuring-advanced-yoga-cooking.trycloudflare.com/api/compiler/compile', {
+      const compileResponse = await axios.post('http://34.123.112.154:8080/api/compiler/compile', {
         sourceCode,
         language: language === 'c_cpp' ? 'C++' : 'C',
         userInput
@@ -101,7 +101,7 @@ const QuestionDetail = () => {
       const resultData = compileResponse.data;
       setResult(resultData);
 
-      const verifyResponse = await axios.post('https://measuring-advanced-yoga-cooking.trycloudflare.com/api/compiler/compileTests', {
+      const verifyResponse = await axios.post('http://34.123.112.154:8080/api/compiler/compileTests', {
         sourceCode,
         language,
         questionSetId,
@@ -129,7 +129,7 @@ const QuestionDetail = () => {
 
   const handleSaveCode = async () => {
     try {
-      const saveCodeResponse = await axios.post('https://measuring-advanced-yoga-cooking.trycloudflare.com/code/save', {
+      const saveCodeResponse = await axios.post('http://34.123.112.154:8080/code/save', {
         codeSaverId: {
           student_email: email,
           question_set_id: questionSetId,
@@ -147,7 +147,7 @@ const QuestionDetail = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post('https://measuring-advanced-yoga-cooking.trycloudflare.com/api/compiler/compile', {
+      const response = await axios.post('http://34.123.112.154:8080/api/compiler/compile', {
         sourceCode,
         language: language === 'c_cpp' ? 'C++' : 'C',
         userInput

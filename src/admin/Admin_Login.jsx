@@ -13,7 +13,7 @@ const AdminLogin = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("https://measuring-advanced-yoga-cooking.trycloudflare.com/admin/loginAdmin", {
+      const response = await axios.post("http://34.123.112.154:8080/admin/loginAdmin", {
         email,
         admin_password: password,
       });

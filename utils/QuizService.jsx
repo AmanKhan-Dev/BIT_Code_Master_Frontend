@@ -1,11 +1,11 @@
 import axios from "axios";
 
 export const api = axios.create({
-    baseURL: "https://measuring-advanced-yoga-cooking.trycloudflare.com/api/quizzes" // Ensure this is the correct base URL for quiz APIs
+    baseURL: "http://34.123.112.154:8080/api/quizzes" // Ensure this is the correct base URL for quiz APIs
 });
 
 export const api1 = axios.create({
-    baseURL: "https://measuring-advanced-yoga-cooking.trycloudflare.com/codingQuestions" // Ensure this is the correct base URL for coding questions
+    baseURL: "http://34.123.112.154:8080/codingQuestions" // Ensure this is the correct base URL for coding questions
 });
 
 export const createQuestion = async (quizQuestion) => {

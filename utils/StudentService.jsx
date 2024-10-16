@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Define the base URL for your student-related endpoints
 export const studentApi = axios.create({
-  baseURL: "https://measuring-advanced-yoga-cooking.trycloudflare.com/student"
+  baseURL: "http://34.123.112.154:8080/student"
 });
 
 
