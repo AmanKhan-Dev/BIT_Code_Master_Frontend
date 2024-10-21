@@ -1,11 +1,11 @@
 import axios from "axios";
 
 export const api = axios.create({
-    baseURL: "http://35.226.248.183:8080/api/quizzes" // Ensure this is the correct base URL for quiz APIs
+    baseURL: "http://localhost:8080/api/quizzes" // Ensure this is the correct base URL for quiz APIs
 });
 
 export const api1 = axios.create({
-    baseURL: "http://35.226.248.183:8080/codingQuestions" // Ensure this is the correct base URL for coding questions
+    baseURL: "http://localhost:8080/codingQuestions" // Ensure this is the correct base URL for coding questions
 });
 
 export const createQuestion = async (quizQuestion) => {

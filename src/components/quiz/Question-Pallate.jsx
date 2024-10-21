@@ -11,7 +11,8 @@ const Pallate = () => {
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [openCategory, setOpenCategory] = useState(null);
   const [solvedQuestions, setSolvedQuestions] = useState({});
-  const [showUserData, setShowUserData] = useState(false); // State to handle canvas visibility
+  const [showUserData, setShowUserData] = useState(false); 
+  const [setInfo, setSetInfo] = useState(null); // State to hold set info
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -19,9 +20,18 @@ const Pallate = () => {
   const userData = location.state?.userData;
 
   useEffect(() => {
+    const fetchSetInfo = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/sets/${questionSetId}`); // Fetch set information
+        setSetInfo(response.data); // Set the fetched data to state
+      } catch (err) {
+        setError(err);
+      }
+    };
+
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get('http://35.226.248.183:8080/codingQuestions/questionsBySetId', {
+        const response = await axios.get('http://localhost:8080/codingQuestions/questionsBySetId', {
           params: { questionSetId: questionSetId || 'BTCOCOC505' },
         });
 
@@ -41,14 +51,15 @@ const Pallate = () => {
       }
     };
 
-    fetchQuestions();
+    fetchSetInfo(); // Fetch set info when component mounts
+    fetchQuestions(); // Fetch questions
   }, [questionSetId]);
 
   const checkSolvedQuestions = async (questions) => {
     const solvedStatus = {};
     for (const question of questions) {
       try {
-        const response = await axios.get('http://35.226.248.183:8080/api/results/exists', {
+        const response = await axios.get('http://localhost:8080/api/results/exists', {
           params: {
             questionSetId: questionSetId,
             questionNo: question.questionNo,
@@ -84,8 +95,7 @@ const Pallate = () => {
       });
     }
   };
-  
-  
+
   const toggleCategory = (index) => {
     setOpenCategory(openCategory === index ? null : index);
   };
@@ -131,7 +141,13 @@ const Pallate = () => {
         </div>
       </div>
       <div className="header">
-        <h4>50 QUESTIONS OF C</h4>
+        {/* Display the set name and ID */}
+        {setInfo && (
+          <>
+            <h4>Set Name: {setInfo.questionSetName}</h4>
+            <h5>Set ID: {setInfo.questionSetId}</h5>
+          </>
+        )}
       </div>
       <div className="accordion-container">
         {Object.entries(questionsByCategory).map(([category, questions], index) => (
@@ -213,20 +229,14 @@ const StyledSection = styled.section`
     h4 {
       color: GrayText;
     }
+
+    h5 {
+      color: DarkGray;
+    }
   }
 
   .accordion-container {
     margin-bottom: 20px;
-  }
-
-  .accordion-header {
-    background-color: #007bff;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 5px;
   }
 
   .grid-container {
