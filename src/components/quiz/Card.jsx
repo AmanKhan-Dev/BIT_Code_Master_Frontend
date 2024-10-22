@@ -16,7 +16,7 @@ const Card = () => {
 
     // Fetch all question sets from the backend
     useEffect(() => {
-        fetch("http://localhost:8080/sets/allsets")
+        fetch("http://10.128.0.2:8080/sets/allsets")
             .then((response) => response.json())
             .then((data) => setQuestionSets(data))
             .catch((error) => console.error("Error fetching question sets:", error));

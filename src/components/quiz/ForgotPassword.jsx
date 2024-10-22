@@ -26,7 +26,7 @@ const ForgotPassword = () => {
       return;
     }
     try {
-      const response = await fetch("http://localhost:8080/api/otp/send", {
+      const response = await fetch("http://10.128.0.2:8080/api/otp/send", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,7 +60,7 @@ const ForgotPassword = () => {
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8080/api/otp/verify", {
+      const response = await fetch("http://10.128.0.2:8080/api/otp/verify", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -98,7 +98,7 @@ const ForgotPassword = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/student/updatePassword", {
+      const response = await fetch("http://10.128.0.2:8080/student/updatePassword", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

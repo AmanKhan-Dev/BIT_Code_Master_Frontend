@@ -33,7 +33,7 @@ const AddQuestion = () => {
   const fetchCategories = async () => {
     if (!questionSetId) return; 
     try {
-      const response = await axios.get(`http://localhost:8080/api/categories/set/${questionSetId}`);
+      const response = await axios.get(`http://10.128.0.2:8080/api/categories/set/${questionSetId}`);
       setCategoryOptions(response.data); 
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -73,7 +73,7 @@ const AddQuestion = () => {
         console.log("Data to be submitted:", questionAdder);
 
         // Send POST request to add the question
-        await axios.post("http://localhost:8080/codingQuestions/add", questionAdder);
+        await axios.post("http://10.128.0.2:8080/codingQuestions/add", questionAdder);
         
         // After the question is added, send the test cases
         await addTestCases(questionId); // Call the function to add test cases
@@ -104,7 +104,7 @@ const addTestCases = async (questionId) => {
 
     try {
         // Send POST request to add test cases
-        await axios.post("http://localhost:8080/api/testcases/add", testCasesToAdd);
+        await axios.post("http://10.128.0.2:8080/api/testcases/add", testCasesToAdd);
         console.log("Test cases added successfully:", testCasesToAdd);
     } catch (error) {
         console.error("Error adding test cases:", error);
@@ -126,7 +126,7 @@ const addTestCases = async (questionId) => {
             }
         };
 
-        const response = await axios.post("http://localhost:8080/api/categories/add", categoryData);
+        const response = await axios.post("http://10.128.0.2:8080/api/categories/add", categoryData);
 
         // Add new category to the local state to update UI
         setCategoryOptions([...categoryOptions, newCategory]);
@@ -146,7 +146,7 @@ const addTestCases = async (questionId) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:8080/api/compiler/compile', {
+      const response = await axios.post('http://10.128.0.2:8080/api/compiler/compile', {
         sourceCode,
         language: language === 'c_cpp' ? 'C++' : 'C',
         userInput,

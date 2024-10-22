@@ -11,7 +11,7 @@ const UserDashboard = () => {
 
   const fetchUserData = async (email) => {
     try {
-      const response = await axios.get(`http://localhost:8080/student/findByEmail`, {
+      const response = await axios.get(`http://10.128.0.2:8080/student/findByEmail`, {
         params: { email }
       });
       setUserData(response.data);

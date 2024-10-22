@@ -13,7 +13,7 @@ const AdminLogin = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:8080/admin/loginAdmin", {
+      const response = await axios.post("http://10.128.0.2:8080/admin/loginAdmin", {
         email,
         admin_password: password,
       });
