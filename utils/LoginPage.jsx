@@ -20,7 +20,8 @@ const Login = () => {
 
       if (response.status === 200) {
         alert("Login Successful");
-        navigate("/dashboard", { state: { email } }); // Pass email to dashboard
+        sessionStorage.setItem("email", email); // Store email in sessionStorage
+        navigate("/dashboard"); // Redirect to dashboard
       }
     } catch (err) {
       if (err.response && err.response.status === 401) {
@@ -71,7 +72,6 @@ const Login = () => {
     </StyledWrapper>
   );
 };
-// Styled components remain the same...
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -81,8 +81,8 @@ const StyledWrapper = styled.div`
   background: linear-gradient(135deg, #e2e8f0 25%, #f8fafc 100%);
 
   .container {
-    max-width: 500px; /* Increase the width */
-    width: 100%; /* Ensure it uses the full width within the max-width limit */
+    max-width: 500px; 
+    width: 100%; 
     background: #f8f9fd;
     background: linear-gradient(
       0deg,
@@ -90,30 +90,30 @@ const StyledWrapper = styled.div`
       rgb(244, 247, 251) 100%
     );
     border-radius: 40px;
-    padding: 50px 60px; /* Increase padding */
+    padding: 50px 60px; 
     border: 5px solid rgb(255, 255, 255);
-    box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 40px 40px -20px; /* Increase shadow */
+    box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 40px 40px -20px; 
     margin: 20px;
   }
 
   .heading {
     text-align: center;
     font-weight: 900;
-    font-size: 36px; /* Increase font size */
+    font-size: 36px; 
     color: rgb(16, 137, 211);
   }
 
   .form {
-    margin-top: 30px; /* Add more spacing */
+    margin-top: 30px;
   }
 
   .form .input {
     width: 100%;
     background: white;
     border: none;
-    padding: 18px 25px; /* Increase padding */
-    border-radius: 25px; /* Increase border radius */
-    margin-top: 20px; /* Increase margin */
+    padding: 18px 25px;
+    border-radius: 25px;
+    margin-top: 20px;
     box-shadow: #cff0ff 0px 10px 10px -5px;
     border-inline: 2px solid transparent;
   }
@@ -125,7 +125,7 @@ const StyledWrapper = styled.div`
   }
 
   .form .forgot-password a {
-    font-size: 12px; /* Slightly increase font size */
+    font-size: 12px; 
     color: #0099ff;
     text-decoration: none;
   }
@@ -140,29 +140,24 @@ const StyledWrapper = styled.div`
       rgb(18, 177, 209) 100%
     );
     color: white;
-    padding-block: 18px; /* Increase padding */
-    margin: 30px auto; /* Increase margin */
-    border-radius: 25px; /* Increase border radius */
+    padding-block: 18px;
+    margin: 30px auto;
+    border-radius: 25px; 
     box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 30px 15px -15px;
     border: none;
     transition: all 0.2s ease-in-out;
   }
 
-  .social-account-container {
-    margin-top: 35px; /* Increase margin */
-  }
-
   .agreement {
-    margin-top: 30px; /* Increase margin */
+    margin-top: 30px;
     text-align: center;
   }
 
   .agreement a {
     color: rgb(16, 137, 211);
-    font-size: 12px; /* Slightly increase font size */
+    font-size: 12px;
     text-decoration: none;
   }
 `;
-
 
 export default Login;
