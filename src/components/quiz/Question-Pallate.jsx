@@ -109,9 +109,15 @@ const Pallate = () => {
 
   return (
     <StyledSection>
-      <button onClick={toggleUserDataCanvas}>
+      <Button onClick={toggleUserDataCanvas}>
         {showUserData ? 'Hide User Data' : 'Show User Data'}
-      </button>
+      </Button>
+
+      {/* Button to navigate to UserDashboard */}
+      <Button onClick={() => navigate('/dashboard')}>
+        Go to Dashboard
+      </Button>
+
       {showUserData && (
         <UserDataCanvas>
           {userData && (
@@ -262,6 +268,27 @@ const StyledSection = styled.section`
 
   .question-button.solved {
     background-color: green;
+  }
+`;
+
+const Button = styled.button`
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.3s, transform 0.2s;
+
+  &:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 `;
 
