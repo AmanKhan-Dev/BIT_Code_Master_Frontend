@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import styled from "styled-components";
 
-const Card = () => {
+const SolverPallate = () => {
     const [questionSets, setQuestionSets] = useState([]);
     const navigate = useNavigate(); // Initialize useNavigate
     const adminDetails = JSON.parse(localStorage.getItem("adminDetails")); // Fetch admin details
@@ -24,7 +24,7 @@ const Card = () => {
 
     // Navigate to GetAllQuiz with questionSetId
     const handleEdit = (questionSetId) => {
-        navigate(`/all-quizzes?setId=${questionSetId}`); // Navigate to the GetAllQuiz page with the set ID
+        navigate(`/questionList?setId=${questionSetId}`); // Navigate to the GetAllQuiz page with the set ID
     };
 
     return (
@@ -52,7 +52,7 @@ const Card = () => {
                                     className="action"
                                     onClick={() => handleEdit(set.questionSetId)} // Call handleEdit on button click
                                 >
-                                    Edit
+                                    Check Solvers
                                 </button>
                             </div>
                         </div>
@@ -182,4 +182,4 @@ const AdminInfo = styled.div`
     }
 `;
 
-export default Card;
+export default SolverPallate;

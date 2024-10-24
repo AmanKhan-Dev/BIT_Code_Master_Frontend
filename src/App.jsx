@@ -27,6 +27,8 @@ import JdoodleEmbed from "./components/question/JdoodleEnbad";
 import Card from "./components/quiz/Card";
 import OTP from "./components/quiz/Otp";
 import ForgotPassword from "./components/quiz/ForgotPassword";
+import QuestionList from "./components/quiz/QuestionList";
+import SolverPallate from "./components/quiz/SolversPage";
 
 
 const App = () => {
@@ -63,6 +65,9 @@ const App = () => {
         <Route path="/card" element={<Card/>} />
         <Route path="/otp" element={<OTP/>} />
         <Route path="/forgot" element={<ForgotPassword/>} />
+        <Route path="/questionList" element={<QuestionList/>} />
+        <Route path="/solversPallate" element={<SolverPallate/>} />
+        
    
       </Routes>
     </main>

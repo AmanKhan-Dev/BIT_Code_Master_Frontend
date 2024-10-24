@@ -38,6 +38,10 @@ const Admin = () => {
                 <Link to={"/addset"} className="nav-link">
                     Add a new question set
                 </Link>
+
+                <Link to={"/solversPallate"} className="nav-link">
+                   See Solvers History
+                </Link>
             </nav>
             {/* Logout Button */}
             <button onClick={handleLogout} className="btn btn-danger mt-3">
