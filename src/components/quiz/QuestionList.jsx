@@ -18,19 +18,20 @@ const QuestionList = () => {
         }
     }, [location]);
 
-    // Fetch questions based on question set ID
     const fetchQuestions = (setId) => {
         fetch(`http://localhost:8080/codingQuestions/questionCount?questionSetId=${setId}`)
-            .then((response) => response.json())
+            .then((response) => {
+                console.log("Questions response:", response); // Log the response
+                return response.json();
+            })
             .then((data) => {
+                console.log("Fetched questions:", data); // Log the fetched questions
                 setQuestions(data);
-                // Fetch results for each question
                 fetchResultsForQuestions(setId, data);
             })
             .catch((error) => console.error("Error fetching questions:", error));
     };
-
-    // Fetch results for each question
+    
     const fetchResultsForQuestions = (setId, questions) => {
         const promises = questions.map((_, index) =>
             fetch(`http://localhost:8080/api/results/resultsByQuestion?questionSetId=${setId}&questionNo=${index + 1}`)
@@ -40,24 +41,30 @@ const QuestionList = () => {
                     }
                     return response.json();
                 })
+                .then((data) => {
+                    console.log(`Results for question ${index + 1}:`, data); // Log results for each question
+                    return data;
+                })
         );
-
+    
         Promise.all(promises)
             .then((resultsArray) => {
+                console.log("All results fetched:", resultsArray); // Log all results fetched
                 setResults(resultsArray);
             })
             .catch((error) => console.error("Error fetching results:", error));
     };
+    
 
     // Consolidate results for rendering
     const consolidatedResults = results.flat().reduce((acc, result) => {
-        const { name, prn, email, questionNo } = result; // Make sure questionNo is provided
+        const { studentName, prn, email, questionNo } = result; // Make sure questionNo is provided
         const existing = acc.find(r => r.prn === prn); // Use PRN to identify unique students
 
         if (existing) {
             existing[questionNo - 1] = 1; // Mark as solved for the specific question
         } else {
-            const newResult = { name, prn, email, ...Array(questions.length).fill(0) };
+            const newResult = { studentName, prn, email, ...Array(questions.length).fill(0) };
             newResult[questionNo - 1] = 1; // Mark as solved for the specific question
             acc.push(newResult);
         }
@@ -72,7 +79,7 @@ const QuestionList = () => {
                 <StyledTable>
                     <thead>
                         <tr>
-                            <th>Name</th>
+                            <th>Student Name</th>
                             <th>PRN</th>
                             <th>Email</th>
                             {questions.map((_, index) => (
@@ -84,7 +91,7 @@ const QuestionList = () => {
                         {consolidatedResults.length > 0 ? (
                             consolidatedResults.map((result, index) => (
                                 <tr key={index}>
-                                    <td>{result.name}</td>
+                                    <td>{result.studentName}</td>
                                     <td>{result.prn}</td>
                                     <td>{result.email}</td>
                                     {questions.map((_, questionIndex) => (
@@ -110,23 +117,20 @@ const QuestionList = () => {
 
 // Styling for the table and container
 const StyledWrapper = styled.div`
-    max-width: 900px;
-    margin: 2rem auto;
-    padding: 1.5rem;
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+   
 
     h2 {
         text-align: center;
         margin-bottom: 1.5rem;
         color: #2196f3;
-        font-size: 1.8rem;
+        font-size: 2rem;
+        font-weight: 600;
     }
 
     p {
         text-align: center;
         color: rgba(0, 0, 0, 0.7);
+        font-size: 1.1rem;
     }
 `;
 
@@ -144,6 +148,7 @@ const StyledTable = styled.table`
         background-color: #2196f3;
         color: white;
         font-weight: bold;
+        text-transform: uppercase;
     }
 
     tr:nth-child(even) {
@@ -152,6 +157,10 @@ const StyledTable = styled.table`
 
     td {
         font-size: 1rem;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1; /* Highlight row on hover */
     }
 `;
 
