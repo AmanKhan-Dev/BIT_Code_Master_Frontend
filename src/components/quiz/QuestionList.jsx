@@ -22,9 +22,7 @@ const QuestionList = () => {
         fetch(`http://localhost:8080/codingQuestions/questionCount?questionSetId=${setId}`)
             .then((response) => response.json())
             .then((data) => setQuestions(data))
-            .catch((error) =>
-                console.error("Error fetching questions:", error)
-            );
+            .catch((error) => console.error("Error fetching questions:", error));
     };
 
     return (
@@ -34,17 +32,23 @@ const QuestionList = () => {
                 <StyledTable>
                     <thead>
                         <tr>
-                            <th>Question Number</th>
-                            <th>Details</th>
+                            <th>Name</th>
+                            <th>PRN</th>
+                            <th>Email</th>
+                            {questions.map((question, index) => (
+                                <th key={index}>Question {index + 1}</th>
+                            ))}
                         </tr>
                     </thead>
                     <tbody>
-                        {questions.map((question, index) => (
-                            <tr key={index}>
-                                <td>{question.questionNumber}</td>
-                                <td>{question.questionDetail}</td>
-                            </tr>
-                        ))}
+                        <tr>
+                            <td>{questions[0]?.name}</td>
+                            <td>{questions[0]?.prn}</td>
+                            <td>{questions[0]?.email}</td>
+                            {questions.map((question, index) => (
+                                <td key={index}>{question.questionDetail}</td>
+                            ))}
+                        </tr>
                     </tbody>
                 </StyledTable>
             ) : (
