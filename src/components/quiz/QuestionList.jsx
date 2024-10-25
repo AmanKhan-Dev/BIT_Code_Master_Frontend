@@ -95,7 +95,13 @@ const QuestionList = () => {
                     <tbody>
                         {filteredResults.length > 0 ? (
                             filteredResults.map((result, index) => (
-                                <StyledRow key={index} isHighlighted={searchQuery && (result.studentName.toLowerCase().includes(searchQuery.toLowerCase()) || result.prn.toLowerCase().includes(searchQuery.toLowerCase()) || result.email.toLowerCase().includes(searchQuery.toLowerCase()))}>
+                                <StyledRowWrapper 
+                                    key={index} 
+                                    isHighlighted={searchQuery && 
+                                        (result.studentName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                        result.prn.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                        result.email.toLowerCase().includes(searchQuery.toLowerCase()))}
+                                >
                                     <td>{result.studentName}</td>
                                     <td>{result.prn}</td>
                                     <td>{result.email}</td>
@@ -108,7 +114,7 @@ const QuestionList = () => {
                                             />
                                         </td>
                                     ))}
-                                </StyledRow>
+                                </StyledRowWrapper>
                             ))
                         ) : (
                             <tr>
@@ -204,5 +210,10 @@ const StyledRow = styled.tr`
         background-color: #f1f1f1; /* Highlight row on hover */
     }
 `;
+
+// Wrapper for StyledRow to avoid passing unrecognized props
+const StyledRowWrapper = ({ isHighlighted, ...props }) => {
+    return <StyledRow {...props} />;
+};
 
 export default QuestionList;
