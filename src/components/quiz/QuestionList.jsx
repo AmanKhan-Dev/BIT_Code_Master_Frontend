@@ -6,9 +6,9 @@ const QuestionList = () => {
     const [questions, setQuestions] = useState([]);
     const [questionSetId, setQuestionSetId] = useState("");
     const [results, setResults] = useState([]);
+    const [searchQuery, setSearchQuery] = useState(""); // State for search query
     const location = useLocation();
 
-    // Extract the setId from the URL parameters
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const setId = params.get("setId");
@@ -46,7 +46,6 @@ const QuestionList = () => {
             .catch((error) => console.error("Error fetching results:", error));
     };
 
-    // Consolidate results for rendering
     const consolidatedResults = results.reduce((acc, result, questionIndex) => {
         if (result) {
             result.forEach(({ studentName, prn, email }) => {
@@ -62,11 +61,25 @@ const QuestionList = () => {
         }
         return acc;
     }, []);
-    
+
+    // Function to filter results based on search query
+    const filteredResults = consolidatedResults.filter(result => 
+        result.studentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        result.prn.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        result.email.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
         <StyledWrapper>
             <h2>Question Set ID: {questionSetId}</h2>
+            <StyledSearchBar>
+                <input
+                    type="text"
+                    placeholder="Search by name, PRN, or email..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+            </StyledSearchBar>
             {questions.length > 0 ? (
                 <StyledTable>
                     <thead>
@@ -80,9 +93,9 @@ const QuestionList = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {consolidatedResults.length > 0 ? (
-                            consolidatedResults.map((result, index) => (
-                                <tr key={index}>
+                        {filteredResults.length > 0 ? (
+                            filteredResults.map((result, index) => (
+                                <StyledRow key={index} isHighlighted={searchQuery && (result.studentName.toLowerCase().includes(searchQuery.toLowerCase()) || result.prn.toLowerCase().includes(searchQuery.toLowerCase()) || result.email.toLowerCase().includes(searchQuery.toLowerCase()))}>
                                     <td>{result.studentName}</td>
                                     <td>{result.prn}</td>
                                     <td>{result.email}</td>
@@ -95,7 +108,7 @@ const QuestionList = () => {
                                             />
                                         </td>
                                     ))}
-                                </tr>
+                                </StyledRow>
                             ))
                         ) : (
                             <tr>
@@ -125,6 +138,27 @@ const StyledWrapper = styled.div`
         text-align: center;
         color: rgba(0, 0, 0, 0.7);
         font-size: 1.1rem;
+    }
+`;
+
+const StyledSearchBar = styled.div`
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+
+    input {
+        width: 80%;
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+        &:focus {
+            outline: none;
+            border-color: #2196f3;
+            box-shadow: 0 0 5px rgba(33, 150, 243, 0.5);
+        }
     }
 `;
 
@@ -159,6 +193,15 @@ const StyledTable = styled.table`
 
     input[type="checkbox"] {
         transform: scale(1.2); /* Larger checkbox */
+    }
+`;
+
+const StyledRow = styled.tr`
+    background-color: ${(props) => props.isHighlighted ? '#e1f5fe' : 'white'};
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: #f1f1f1; /* Highlight row on hover */
     }
 `;
 
