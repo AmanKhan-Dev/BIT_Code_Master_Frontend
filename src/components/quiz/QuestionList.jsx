@@ -20,57 +20,49 @@ const QuestionList = () => {
 
     const fetchQuestions = (setId) => {
         fetch(`http://localhost:8080/codingQuestions/questionCount?questionSetId=${setId}`)
-            .then((response) => {
-                console.log("Questions response:", response); // Log the response
-                return response.json();
-            })
+            .then((response) => response.json())
             .then((data) => {
-                console.log("Fetched questions:", data); // Log the fetched questions
                 setQuestions(data);
                 fetchResultsForQuestions(setId, data);
             })
             .catch((error) => console.error("Error fetching questions:", error));
     };
-    
+
     const fetchResultsForQuestions = (setId, questions) => {
         const promises = questions.map((_, index) =>
             fetch(`http://localhost:8080/api/results/resultsByQuestion?questionSetId=${setId}&questionNo=${index + 1}`)
                 .then((response) => {
-                    if (!response.ok) {
-                        return []; // Return an empty array if no results found
+                    if (response.ok) {
+                        return response.json(); // Return the result if the status is 200
                     }
-                    return response.json();
-                })
-                .then((data) => {
-                    console.log(`Results for question ${index + 1}:`, data); // Log results for each question
-                    return data;
+                    return null; // Return null for non-200 responses
                 })
         );
-    
+
         Promise.all(promises)
             .then((resultsArray) => {
-                console.log("All results fetched:", resultsArray); // Log all results fetched
                 setResults(resultsArray);
             })
             .catch((error) => console.error("Error fetching results:", error));
     };
-    
 
     // Consolidate results for rendering
-    const consolidatedResults = results.flat().reduce((acc, result) => {
-        const { studentName, prn, email, questionNo } = result; // Make sure questionNo is provided
-        const existing = acc.find(r => r.prn === prn); // Use PRN to identify unique students
-
-        if (existing) {
-            existing[questionNo - 1] = 1; // Mark as solved for the specific question
-        } else {
-            const newResult = { studentName, prn, email, ...Array(questions.length).fill(0) };
-            newResult[questionNo - 1] = 1; // Mark as solved for the specific question
-            acc.push(newResult);
+    const consolidatedResults = results.reduce((acc, result, questionIndex) => {
+        if (result) {
+            result.forEach(({ studentName, prn, email }) => {
+                const existing = acc.find(r => r.prn === prn);
+                if (existing) {
+                    existing[questionIndex] = 1; // Mark as solved for the specific question
+                } else {
+                    const newResult = { studentName, prn, email, ...Array(questions.length).fill(0) };
+                    newResult[questionIndex] = 1; // Mark as solved for the specific question
+                    acc.push(newResult);
+                }
+            });
         }
-
         return acc;
     }, []);
+    
 
     return (
         <StyledWrapper>
@@ -96,7 +88,11 @@ const QuestionList = () => {
                                     <td>{result.email}</td>
                                     {questions.map((_, questionIndex) => (
                                         <td key={questionIndex}>
-                                            {result[questionIndex] || 0} {/* Display solving status */}
+                                            <input
+                                                type="checkbox"
+                                                checked={!!result[questionIndex]} // Check if the question is solved
+                                                readOnly
+                                            />
                                         </td>
                                     ))}
                                 </tr>
@@ -117,8 +113,6 @@ const QuestionList = () => {
 
 // Styling for the table and container
 const StyledWrapper = styled.div`
-   
-
     h2 {
         text-align: center;
         margin-bottom: 1.5rem;
@@ -161,6 +155,10 @@ const StyledTable = styled.table`
 
     tr:hover {
         background-color: #f1f1f1; /* Highlight row on hover */
+    }
+
+    input[type="checkbox"] {
+        transform: scale(1.2); /* Larger checkbox */
     }
 `;
 
