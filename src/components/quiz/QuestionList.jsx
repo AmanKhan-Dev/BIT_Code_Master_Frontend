@@ -52,8 +52,9 @@ const QuestionList = () => {
                 const existing = acc.find(r => r.prn === prn);
                 if (existing) {
                     existing[questionIndex] = 1; // Mark as solved for the specific question
+                    existing.responseCount += 1; // Increment response count for 200 responses
                 } else {
-                    const newResult = { studentName, prn, email, ...Array(questions.length).fill(0) };
+                    const newResult = { studentName, prn, email, responseCount: 1, ...Array(questions.length).fill(0) };
                     newResult[questionIndex] = 1; // Mark as solved for the specific question
                     acc.push(newResult);
                 }
@@ -84,6 +85,7 @@ const QuestionList = () => {
                 <StyledTable>
                     <thead>
                         <tr>
+                            <th>Solved</th> {/* New column for response count */}
                             <th>Student Name</th>
                             <th>PRN</th>
                             <th>Email</th>
@@ -102,6 +104,7 @@ const QuestionList = () => {
                                         result.prn.toLowerCase().includes(searchQuery.toLowerCase()) || 
                                         result.email.toLowerCase().includes(searchQuery.toLowerCase()))}
                                 >
+                                    <td>{result.responseCount}</td> {/* Display response count */}
                                     <td>{result.studentName}</td>
                                     <td>{result.prn}</td>
                                     <td>{result.email}</td>
@@ -118,7 +121,7 @@ const QuestionList = () => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={questions.length + 3}>No results available for this set.</td>
+                                <td colSpan={questions.length + 4}>No results available for this set.</td>
                             </tr>
                         )}
                     </tbody>
