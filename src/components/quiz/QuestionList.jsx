@@ -70,6 +70,14 @@ const QuestionList = () => {
         result.email.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    // Sort filtered results by response count in descending order, then by PRN
+    const sortedFilteredResults = filteredResults.sort((a, b) => {
+        if (b.responseCount !== a.responseCount) {
+            return b.responseCount - a.responseCount; // Sort by response count descending
+        }
+        return a.prn.localeCompare(b.prn); // Secondary sort by PRN
+    });
+
     return (
         <StyledWrapper>
             <h2>Question Set ID: {questionSetId}</h2>
@@ -95,8 +103,8 @@ const QuestionList = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredResults.length > 0 ? (
-                            filteredResults.map((result, index) => (
+                        {sortedFilteredResults.length > 0 ? (
+                            sortedFilteredResults.map((result, index) => (
                                 <StyledRowWrapper 
                                     key={index} 
                                     isHighlighted={searchQuery && 
