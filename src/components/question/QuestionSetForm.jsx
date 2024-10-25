@@ -59,7 +59,7 @@ const QuestionSetForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8080/sets/addset', questionSet);
+      const response = await axios.post('http://35.226.248.183:8080/sets/addset', questionSet);
       setResponseMessage(response.data);
     } catch (error) {
       setResponseMessage(error.response ? error.response.data : 'An error occurred');

@@ -19,7 +19,7 @@ const QuestionList = () => {
     }, [location]);
 
     const fetchQuestions = (setId) => {
-        fetch(`http://localhost:8080/codingQuestions/questionCount?questionSetId=${setId}`)
+        fetch(`http://35.226.248.183:8080/codingQuestions/questionCount?questionSetId=${setId}`)
             .then((response) => response.json())
             .then((data) => {
                 setQuestions(data);
@@ -30,7 +30,7 @@ const QuestionList = () => {
 
     const fetchResultsForQuestions = (setId, questions) => {
         const promises = questions.map((_, index) =>
-            fetch(`http://localhost:8080/api/results/resultsByQuestion?questionSetId=${setId}&questionNo=${index + 1}`)
+            fetch(`http://35.226.248.183:8080/api/results/resultsByQuestion?questionSetId=${setId}&questionNo=${index + 1}`)
                 .then((response) => {
                     if (response.ok) {
                         return response.json(); // Return the result if the status is 200
@@ -64,18 +64,15 @@ const QuestionList = () => {
     }, []);
 
     // Function to filter results based on search query
-    const filteredResults = consolidatedResults.filter(result => 
+    const filteredResults = consolidatedResults.filter(result =>
         result.studentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         result.prn.toLowerCase().includes(searchQuery.toLowerCase()) ||
         result.email.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    // Sort filtered results by response count in descending order, then by PRN
+    // Sort filtered results by PRN in ascending order (converted to number)
     const sortedFilteredResults = filteredResults.sort((a, b) => {
-        if (b.responseCount !== a.responseCount) {
-            return b.responseCount - a.responseCount; // Sort by response count descending
-        }
-        return a.prn.localeCompare(b.prn); // Secondary sort by PRN
+        return Number(a.prn) - Number(b.prn);
     });
 
     return (
@@ -93,7 +90,7 @@ const QuestionList = () => {
                 <StyledTable>
                     <thead>
                         <tr>
-                            <th>Solved</th> {/* New column for response count */}
+                            <th>Solved</th>
                             <th>Student Name</th>
                             <th>PRN</th>
                             <th>Email</th>
@@ -112,7 +109,7 @@ const QuestionList = () => {
                                         result.prn.toLowerCase().includes(searchQuery.toLowerCase()) || 
                                         result.email.toLowerCase().includes(searchQuery.toLowerCase()))}
                                 >
-                                    <td>{result.responseCount}</td> {/* Display response count */}
+                                    <td>{result.responseCount}</td>
                                     <td>{result.studentName}</td>
                                     <td>{result.prn}</td>
                                     <td>{result.email}</td>

@@ -22,7 +22,7 @@ const Pallate = () => {
   useEffect(() => {
     const fetchSetInfo = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/sets/${questionSetId}`); // Fetch set information
+        const response = await axios.get(`http://35.226.248.183:8080/sets/${questionSetId}`); // Fetch set information
         setSetInfo(response.data); // Set the fetched data to state
       } catch (err) {
         setError(err);
@@ -31,7 +31,7 @@ const Pallate = () => {
 
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/codingQuestions/questionsBySetId', {
+        const response = await axios.get('http://35.226.248.183:8080/codingQuestions/questionsBySetId', {
           params: { questionSetId: questionSetId || 'BTCOCOC505' },
         });
 
@@ -59,7 +59,7 @@ const Pallate = () => {
     const solvedStatus = {};
     for (const question of questions) {
       try {
-        const response = await axios.get('http://localhost:8080/api/results/exists', {
+        const response = await axios.get('http://35.226.248.183:8080/api/results/exists', {
           params: {
             questionSetId: questionSetId,
             questionNo: question.questionNo,
