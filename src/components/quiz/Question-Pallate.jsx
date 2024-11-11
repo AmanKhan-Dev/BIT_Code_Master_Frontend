@@ -66,18 +66,19 @@ const Pallate = () => {
             email: userEmail,
           }
         });
-
-        if (response.data === "Yes it exists") {
+  
+        // Check if the question is solved based on response data and status
+        if (response.status === 200 && response.data === 1) {
           solvedStatus[question.questionNo] = true;
         }
       } catch (error) {
         console.error("Error checking if question exists:", error);
       }
     }
-
+  
     setSolvedQuestions(solvedStatus);
   };
-
+  
   const handleQuestionClick = (question) => {
     setSelectedQuestion(question);
   };
