@@ -21,7 +21,7 @@ const CompileTests = () => {
     };
 
     try {
-      const res = await axios.post('http://35.226.248.183:8080/api/compiler/compileTests', codeRequest);
+      const res = await axios.post('https://bit-code-master-backend-879855cbe9fa.herokuapp.com/api/compiler/compileTests', codeRequest);
       setResponse(res.data);
     } catch (error) {
       setResponse(`Error: ${error.response ? error.response.data : error.message}`);

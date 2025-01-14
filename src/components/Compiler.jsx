@@ -7,7 +7,7 @@ function Compiler() {
 
   const handleCompileAndRun = async () => {
     try {
-      const response = await axios.post("http://35.226.248.183:8080/run", { code });
+      const response = await axios.post("https://bit-code-master-backend-879855cbe9fa.herokuapp.com/run", { code });
       setOutput(response.data.output);
     } catch (error) {
       setOutput("Error: " + error.message);

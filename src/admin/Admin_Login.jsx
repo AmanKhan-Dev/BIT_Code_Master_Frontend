@@ -13,7 +13,7 @@ const AdminLogin = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://35.226.248.183:8080/admin/loginAdmin", {
+      const response = await axios.post("https://bit-code-master-backend-879855cbe9fa.herokuapp.com/admin/loginAdmin", {
         email,
         admin_password: password,
       });

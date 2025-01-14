@@ -11,7 +11,7 @@ const UserDashboard = () => {
 
   const fetchUserData = async (email) => {
     try {
-      const response = await axios.get(`http://35.226.248.183:8080/student/findByEmail`, {
+      const response = await axios.get(`https://bit-code-master-backend-879855cbe9fa.herokuapp.com/student/findByEmail`, {
         params: { email }
       });
       setUserData(response.data);
