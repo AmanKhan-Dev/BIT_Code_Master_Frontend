@@ -36,7 +36,7 @@ const App = () => {
   const location = useLocation();
 
   // Show Navbar only on the following paths
-  const showNavbar = [ "/Login-Page", "/Register"].includes(location.pathname);
+  const showNavbar = [ "/","/Login-Page", "/Register"].includes(location.pathname);
 
   return (
     <main >
