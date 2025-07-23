@@ -340,9 +340,11 @@ const Home = () => {
           <p className="text-xl md:text-2xl mb-8 animate-fade-in opacity-90">
             Practice, Learn, and Excel in C/C++, Java, and Python
           </p>
+          <Link to={"/adminLogin"}>
           <button className="btn-primary text-white px-8 py-4 text-lg font-semibold !rounded-button whitespace-nowrap animate-float cursor-pointer">
-            Start Coding Now
+            Faculty Sign In
           </button>
+          </Link>
         </div>
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
           <i className="fas fa-chevron-down text-2xl"></i>
