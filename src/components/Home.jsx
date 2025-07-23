@@ -489,7 +489,7 @@ const Home = () => {
               Ready to Begin Your Coding Journey?
             </h2>
             <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              Join thousands of students and professionals who are already
+              Join numerous BIT students who are already
               mastering their coding skills
             </p>
             <button className="bg-white text-blue-600 px-8 py-4 text-lg font-semibold !rounded-button hover:bg-gray-100 transition-colors whitespace-nowrap cursor-pointer">
