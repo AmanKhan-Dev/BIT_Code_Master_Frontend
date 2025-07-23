@@ -31,14 +31,15 @@ import QuestionList from "./components/quiz/QuestionList";
 import SolverPallate from "./components/quiz/SolversPage";
 
 
+
 const App = () => {
   const location = useLocation();
 
   // Show Navbar only on the following paths
-  const showNavbar = ["/", "/Login-Page", "/Register"].includes(location.pathname);
+  const showNavbar = [ "/Login-Page", "/Register"].includes(location.pathname);
 
   return (
-    <main className="container mt-5 mb-5">
+    <main >
       {showNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
