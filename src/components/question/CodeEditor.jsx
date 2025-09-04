@@ -39,7 +39,7 @@ const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-        const response = await axios.post('https://bit-code-master-backend-879855cbe9fa.herokuapp.com/api/compiler/compile', {
+        const response = await axios.post('http://localhost:8080/api/compiler/compile', {
             sourceCode,
             language: language === 'c_cpp' ? 'C++' : 'C',
             userInput

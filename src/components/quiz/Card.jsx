@@ -16,7 +16,7 @@ const Card = () => {
 
     // Fetch all question sets from the backend
     useEffect(() => {
-        fetch("https://bit-code-master-backend-879855cbe9fa.herokuapp.com/sets/allsets")
+        fetch("http://localhost:8080/sets/allsets")
             .then((response) => response.json())
             .then((data) => setQuestionSets(data))
             .catch((error) => console.error("Error fetching question sets:", error));

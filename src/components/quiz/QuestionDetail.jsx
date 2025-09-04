@@ -17,16 +17,17 @@ const QuestionDetail = () => {
   const [language, setLanguage] = useState('c_cpp');
   const [userInput, setUserInput] = useState('');
   const [result, setResult] = useState('');
+  const [runHistory, setRunHistory] = useState([]); // New state for run response history
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState('');
   const [saveMessage, setSaveMessage] = useState('');
   
-  const { email, userData } = location.state || {}; // Retrieve user details from location state
+  const { email, userData } = location.state || {};
 
   useEffect(() => {
     const fetchQuestionData = async () => {
       try {
-        const url = `https://bit-code-master-backend-879855cbe9fa.herokuapp.com/codingQuestions/questions/${questionSetId}/${questionNo}`;
+        const url = `http://localhost:8080/codingQuestions/questions/${questionSetId}/${questionNo}`;
         const response = await axios.get(url);
         setQuestionData(response.data);
       } catch (err) {
@@ -35,23 +36,22 @@ const QuestionDetail = () => {
     };
   
     fetchQuestionData();
-    fetchSavedCode(); // Fetch saved code
+    fetchSavedCode();
   }, [questionSetId, questionNo, email]);
   
   const fetchSavedCode = async () => {
     try {
-      const url = `https://bit-code-master-backend-879855cbe9fa.herokuapp.com/code/get?student_email=${email}&question_set_id=${questionSetId}&question_no=${questionNo}`;
+      const url = `http://localhost:8080/code/get?student_email=${email}&question_set_id=${questionSetId}&question_no=${questionNo}`;
       const response = await axios.get(url);
-      setSourceCode(response.data); // Set the saved code in the editor
+      setSourceCode(response.data);
     } catch (err) {
       console.error('Error fetching saved code:', err);
     }
   };
   
-
   const saveResult = async (resultData) => {
     try {
-      await axios.post('https://bit-code-master-backend-879855cbe9fa.herokuapp.com/api/results/saveResult', {
+      await axios.post('http://localhost:8080/api/results/saveResult', {
         questionSetId,
         questionNo,
         email,
@@ -70,7 +70,7 @@ const QuestionDetail = () => {
     e.preventDefault();
     setLoading(true);
     try {
-        const response = await axios.post('https://bit-code-master-backend-879855cbe9fa.herokuapp.com/api/compiler/compile', {
+        const response = await axios.post('http://localhost:8080/api/compiler/compile', {
             sourceCode,
             language: language === 'c_cpp' ? 'C++' : 'C',
             userInput,
@@ -80,7 +80,7 @@ const QuestionDetail = () => {
         const testCasesPassed = checkTestCases(resultData);
         alert(testCasesPassed ? 'All test cases passed' : 'Some test cases did not pass');
     } catch (error) {
-        console.error("Error response:", error); // Log the full error
+        console.error("Error response:", error);
         const errorMessage = error.response?.data || error.message || "An unknown error occurred.";
         setResponse(`Error: ${errorMessage}`);
     } finally {
@@ -92,7 +92,7 @@ const QuestionDetail = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const compileResponse = await axios.post('https://bit-code-master-backend-879855cbe9fa.herokuapp.com/api/compiler/compile', {
+      const compileResponse = await axios.post('http://localhost:8080/api/compiler/compile', {
         sourceCode,
         language: language === 'c_cpp' ? 'C++' : 'C',
         userInput
@@ -101,19 +101,19 @@ const QuestionDetail = () => {
       const resultData = compileResponse.data;
       setResult(resultData);
 
-      const verifyResponse = await axios.post('https://bit-code-master-backend-879855cbe9fa.herokuapp.com/api/compiler/compileTests', {
+      const verifyResponse = await axios.post('http://localhost:8080/api/compiler/compileTests', {
         sourceCode,
         language,
         questionSetId,
         questionNo,
-    });
+      });
 
       setResponse(verifyResponse.data);
       const testCasesPassed = checkTestCases(resultData);
 
       if (verifyResponse.status === 200 && testCasesPassed) {
-        await saveResult(resultData); // Save result after verification
-        await handleSaveCode(); // Automatically save the code
+        await saveResult(resultData);
+        await handleSaveCode();
         alert("All test cases passed! Code saved successfully.");
         navigate(-1);
       } else {
@@ -122,14 +122,14 @@ const QuestionDetail = () => {
     } catch (error) {
       const errorMessage = error.response?.data || error.message || "An unknown error occurred.";
       setResponse(`Error: ${errorMessage}`);
-  } finally {
+    } finally {
       setLoading(false);
-  }
+    }
 };
 
   const handleSaveCode = async () => {
     try {
-      const saveCodeResponse = await axios.post('https://bit-code-master-backend-879855cbe9fa.herokuapp.com/code/save', {
+      const saveCodeResponse = await axios.post('http://localhost:8080/code/save', {
         codeSaverId: {
           student_email: email,
           question_set_id: questionSetId,
@@ -147,7 +147,7 @@ const QuestionDetail = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post('https://bit-code-master-backend-879855cbe9fa.herokuapp.com/api/compiler/compile', {
+      const response = await axios.post('http://localhost:8080/api/compiler/compile', {
         sourceCode,
         language: language === 'c_cpp' ? 'C++' : 'C',
         userInput
@@ -155,10 +155,31 @@ const QuestionDetail = () => {
 
       const resultData = response.data;
       setResult(resultData);
+      // Add to run history with timestamp
+      setRunHistory(prev => [
+        {
+          id: Date.now(), // Unique ID for each run
+          result: resultData,
+          timestamp: new Date().toLocaleString(),
+          input: userInput,
+        },
+        ...prev.slice(0, 9) // Keep only the latest 10 runs
+      ]);
       const testCasesPassed = checkTestCases(resultData);
       alert(testCasesPassed ? 'All test cases passed' : 'Some test cases did not pass');
     } catch (error) {
-      setResponse(`Error: ${error.response ? error.response.data : error.message}`);
+      const errorMessage = error.response?.data || error.message || "An unknown error occurred.";
+      setResponse(`Error: ${errorMessage}`);
+      // Add error to run history
+      setRunHistory(prev => [
+        {
+          id: Date.now(),
+          result: `Error: ${errorMessage}`,
+          timestamp: new Date().toLocaleString(),
+          input: userInput,
+        },
+        ...prev.slice(0, 9)
+      ]);
     } finally {
       setLoading(false);
     }
@@ -204,28 +225,22 @@ const QuestionDetail = () => {
       // enableLiveAutocompletion: true,
     });
 
-    // Disable copy, paste, and cut
     editor.container.addEventListener("copy", (e) => e.preventDefault());
     editor.container.addEventListener("paste", (e) => e.preventDefault());
     editor.container.addEventListener("cut", (e) => e.preventDefault());
-
-    // Disable right-click context menu
     editor.container.addEventListener("contextmenu", (e) => e.preventDefault());
 
-    // Disable Ctrl+C and Ctrl+V
     editor.commands.addCommand({
       name: "disableCopyPaste",
       bindKey: { win: "Ctrl-C|Ctrl-V", mac: "Command-C|Command-V" },
-      exec: () => {}, // No operation
-      readOnly: true, // Prevents modifying content in read-only mode
+      exec: () => {},
+      readOnly: true,
     });
 
-    // Disable clipboard actions on the entire document
     document.addEventListener("copy", (e) => e.preventDefault());
     document.addEventListener("cut", (e) => e.preventDefault());
     document.addEventListener("paste", (e) => e.preventDefault());
   };
-
 
   return (
     <div className="question-detail-container">
@@ -234,8 +249,8 @@ const QuestionDetail = () => {
         {error && <div className="error-message">{error}</div>}
         {questionData ? (
           <div className="question-card">
-            <p><strong>Question Set ID:</strong> {questionData.questionSetId}</p>
-            <p><strong>Question No:</strong> {questionData.questionNo}</p>
+            <p><strong>Question Set ID:</strong> {questionData.id.questionSetId}</p>
+            <p><strong>Question No:</strong> {questionData.id.questionNo}</p>
             <p><strong>Question:</strong> {questionData.question}</p>
             {questionData.question_description && (
               <p><strong>Description:</strong> <pre>{questionData.question_description}</pre></p>
@@ -260,10 +275,10 @@ const QuestionDetail = () => {
           value={sourceCode}
           onChange={(newValue) => setSourceCode(newValue)}
           width="100%"
-          height="70%" 
+          height="70%"
           editorProps={{ $blockScrolling: true }}
           style={{ borderRadius: '4px', border: '1px solid #ddd', minHeight: '500px' }}
-         onLoad={handleEditorLoad} disable copy paste
+          onLoad={handleEditorLoad}
         />
 
         <form onSubmit={handleVerifySubmit} className="code-form">
@@ -286,22 +301,13 @@ const QuestionDetail = () => {
             className="user-input"
           />
           <div className="button-group">
-            <button
-              type="submit"
-              className="verify-button"
-            >
+            <button type="submit" className="verify-button">
               Verify
             </button>
-            <button
-              onClick={handleRunCode}
-              className="run-code-button"
-            >
+            <button onClick={handleRunCode} className="run-code-button">
               Run Code
             </button>
-            <button
-              onClick={handleSaveCode}  // Save Code Button
-              className="save-code-button"
-            >
+            <button onClick={handleSaveCode} className="save-code-button">
               Save Code
             </button>
           </div>
@@ -309,7 +315,7 @@ const QuestionDetail = () => {
           <pre className="result-output">{result}</pre>
         </form>
 
-        {saveMessage && ( // Show the save message
+        {saveMessage && (
           <div className="save-message">
             <p>{saveMessage}</p>
           </div>
@@ -319,6 +325,21 @@ const QuestionDetail = () => {
           <div className="response-container">
             <p><strong>Response:</strong></p>
             <pre>{response}</pre>
+          </div>
+        )}
+
+        {runHistory.length > 0 && (
+          <div className="run-history-container">
+            <h3 className="run-history-title">Run History</h3>
+            <div className="run-history-list">
+              {runHistory.map((entry) => (
+                <div key={entry.id} className="run-history-item">
+                  <p><strong>Time:</strong> {entry.timestamp}</p>
+                  <p><strong>Input:</strong> <pre>{entry.input || 'No input'}</pre></p>
+                  <p><strong>Output:</strong> <pre>{entry.result}</pre></p>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

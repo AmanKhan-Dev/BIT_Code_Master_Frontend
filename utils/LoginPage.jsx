@@ -13,7 +13,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("https://bit-code-master-backend-879855cbe9fa.herokuapp.com/student/logins", {
+      const response = await axios.post("http://localhost:8080/student/logins", {
         email,
         password,
       });

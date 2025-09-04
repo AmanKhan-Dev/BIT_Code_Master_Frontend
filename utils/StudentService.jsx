@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Define the base URL for your student-related endpoints
 export const studentApi = axios.create({
-  baseURL: "https://bit-code-master-backend-879855cbe9fa.herokuapp.com/student"
+  baseURL: "http://localhost:8080/student"
 });
 
 
