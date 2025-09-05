@@ -231,10 +231,12 @@
   font-size: 0.875rem;
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments for tablets and smaller devices */
 @media (max-width: 1024px) {
   .question-detail-container {
     flex-direction: column;
+    height: auto;
+    min-height: 100vh;
   }
 
   .question-info,
@@ -246,9 +248,108 @@
   .question-info {
     border-right: none;
     border-bottom: 1px solid #e5e7eb;
+    padding: 16px;
+  }
+
+  .code-editor-section {
+    padding: 16px;
   }
 
   .code-editor-section .ace_editor {
-    min-height: 400px;
+    min-height: 300px;
+  }
+
+  .question-info h2 {
+    font-size: 1.25rem;
+  }
+
+  .question-card {
+    padding: 1rem;
+  }
+
+  .question-card p {
+    font-size: 0.9375rem;
+  }
+
+  .question-card pre {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Additional adjustments for mobile devices */
+@media (max-width: 640px) {
+  .question-detail-container {
+    padding: 8px;
+  }
+
+  .question-info {
+    padding: 12px;
+  }
+
+  .code-editor-section {
+    padding: 12px;
+  }
+
+  .question-info h2 {
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+  }
+
+  .question-card {
+    padding: 0.75rem;
+  }
+
+  .question-card p {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .question-card pre {
+    font-size: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .code-editor-section .ace_editor {
+    min-height: 250px;
+  }
+
+  .form-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .language-select,
+  .user-input {
+    font-size: 0.8125rem;
+    padding: 0.5rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .verify-button,
+  .run-code-button,
+  .save-code-button {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.8125rem;
+  }
+
+  .result-output {
+    max-height: 150px;
+    font-size: 0.75rem;
+  }
+
+  .response-container p,
+  .response-container pre {
+    font-size: 0.75rem;
+  }
+
+  .error-message,
+  .save-message {
+    font-size: 0.75rem;
+    padding: 0.75rem;
   }
 }
