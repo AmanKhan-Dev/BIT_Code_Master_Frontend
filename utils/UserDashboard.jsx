@@ -11,7 +11,7 @@ const UserDashboard = () => {
 
   const fetchUserData = async (email) => {
     try {
-      const response = await axios.get(`http://localhost:8080/student/findByEmail`, {
+      const response = await axios.get(`http://myspringapp-env.eba-guzhenp3.us-east-1.elasticbeanstalk.com/student/findByEmail`, {
         params: { email }
       });
       setUserData(response.data);

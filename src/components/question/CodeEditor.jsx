@@ -39,7 +39,7 @@ const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-        const response = await axios.post('http://localhost:8080/api/compiler/compile', {
+        const response = await axios.post('http://myspringapp-env.eba-guzhenp3.us-east-1.elasticbeanstalk.com/api/compiler/compile', {
             sourceCode,
             language: language === 'c_cpp' ? 'C++' : 'C',
             userInput

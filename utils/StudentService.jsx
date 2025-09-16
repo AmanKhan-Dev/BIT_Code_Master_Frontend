@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Define the base URL for your student-related endpoints
 export const studentApi = axios.create({
-  baseURL: "http://localhost:8080/student"
+  baseURL: "http://myspringapp-env.eba-guzhenp3.us-east-1.elasticbeanstalk.com/student"
 });
 
 

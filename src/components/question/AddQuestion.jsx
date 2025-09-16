@@ -34,7 +34,7 @@ const AddQuestion = () => {
     if (!questionSetId) return;
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/categories/set/${questionSetId}`,
+        `http://myspringapp-env.eba-guzhenp3.us-east-1.elasticbeanstalk.com/api/categories/set/${questionSetId}`,
       );
       setCategoryOptions(response.data);
     } catch (error) {
@@ -77,7 +77,7 @@ const AddQuestion = () => {
 
       // Send POST request to add the question
       await axios.post(
-        "http://localhost:8080/codingQuestions/add",
+        "http://myspringapp-env.eba-guzhenp3.us-east-1.elasticbeanstalk.com/codingQuestions/add",
         questionAdder,
       );
 
@@ -111,7 +111,7 @@ const AddQuestion = () => {
     try {
       // Send POST request to add test cases
       await axios.post(
-        "http://localhost:8080/api/testcases/add",
+        "http://myspringapp-env.eba-guzhenp3.us-east-1.elasticbeanstalk.com/api/testcases/add",
         testCasesToAdd,
       );
       console.log("Test cases added successfully:", testCasesToAdd);
@@ -138,7 +138,7 @@ const AddQuestion = () => {
       };
 
       const response = await axios.post(
-        "http://localhost:8080/api/categories/add",
+        "http://myspringapp-env.eba-guzhenp3.us-east-1.elasticbeanstalk.com/api/categories/add",
         categoryData,
       );
 
@@ -160,7 +160,7 @@ const AddQuestion = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/compiler/compile",
+        "http://myspringapp-env.eba-guzhenp3.us-east-1.elasticbeanstalk.com/api/compiler/compile",
         {
           sourceCode,
           language: language === "c_cpp" ? "C++" : "C",
